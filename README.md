@@ -7,6 +7,14 @@ Minimal JavaScript interfaces for file system abstraction
 
 
 
+## Install
+
+```
+npm install --save fs-adapters
+```
+
+
+
 ## Specification
 
 ### `init()`
