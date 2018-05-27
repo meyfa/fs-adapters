@@ -48,3 +48,37 @@ Delete a file.
 
 **Parameter `fileName`:** The name of the file to delete.<br />
 **Returns:** `Promise` A Promise that resolves when done, or rejects on error.
+
+## Implementations
+
+### MemoryAdapter
+
+This adapter implements the above specification by storing all data and metadata
+in the process memory. It is therefore not dependent on the actual file system
+and highly suitable for test scenarios, for example.
+
+#### Constructor
+
+```javascript
+MemoryAdapter(initialFiles)
+```
+
+**Parameter `initialFiles`:** (optional) An object mapping file names to their
+contents (instances of `Buffer`).
+
+#### Usage Example
+
+```javascript
+const MemoryAdapter = require("fs-adapters").MemoryAdapter;
+
+let adapter = new MemoryAdapter({
+    "foo.txt": Buffer.from("hello world", "utf8"),
+    "empty.bin": Buffer.alloc(0),
+});
+
+adapter.init().then(() => {
+    adapter.listFiles().then((files) => {
+        console.log(files); // ["foo.txt", "empty.bin"]
+    });
+});
+```
