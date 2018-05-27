@@ -5,6 +5,8 @@
 
 Minimal JavaScript interfaces for file system abstraction
 
+
+
 ## Specification
 
 ### `init()`
@@ -49,6 +51,8 @@ Delete a file.
 **Parameter `fileName`:** The name of the file to delete.<br />
 **Returns:** `Promise` A Promise that resolves when done, or rejects on error.
 
+
+
 ## Implementations
 
 ### MemoryAdapter
@@ -80,5 +84,34 @@ adapter.init().then(() => {
     adapter.listFiles().then((files) => {
         console.log(files); // ["foo.txt", "empty.bin"]
     });
+});
+```
+
+### DirectoryAdapter
+
+This adapter reads from and writes to a specific base directory. All file names
+are interpreted as relative to the base directory, and navigating outside that
+directory (e.g. via `..`) or accessing the directory itself (e.g. via `.`)
+results in an error.
+
+#### Constructor
+
+```javascript
+DirectoryAdapter(directory)
+```
+
+**Parameter `directory`:** The absolute path to the base directory.
+
+#### Usage Example
+
+```javascript
+const DirectoryAdapter = require("fs-adapters").DirectoryAdapter;
+const path = require("path");
+
+let directory = path.join(__dirname, "data");
+let adapter = new DirectoryAdapter(directory);
+
+adapter.init().then(() => {
+    // do something with adapter
 });
 ```
