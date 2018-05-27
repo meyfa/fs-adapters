@@ -1,7 +1,7 @@
 {
   "name": "fs-adapters",
   "version": "0.0.0",
-  "description": "Minimal interfaces for abstract file systems",
+  "description": "Minimal interfaces for file system abstraction",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/mocha --recursive"
