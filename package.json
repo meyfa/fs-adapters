@@ -1,0 +1,35 @@
+{
+  "name": "fs-adapters",
+  "version": "0.0.0",
+  "description": "Minimal interfaces for abstract file systems",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meyfa/fs-adapters.git"
+  },
+  "keywords": [
+    "fs",
+    "filesystem",
+    "adapter",
+    "interface",
+    "memory"
+  ],
+  "author": "Fabian Meyer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meyfa/fs-adapters/issues"
+  },
+  "homepage": "https://github.com/meyfa/fs-adapters",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "stream-buffers": "^3.0.2"
+  }
+}
