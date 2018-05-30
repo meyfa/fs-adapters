@@ -74,6 +74,17 @@ describe("lib/directory.js", function () {
                 .that.includes("test.txt");
         });
 
+        it("rejects when given a file path", function () {
+            const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, "test.txt"));
+            return expect(obj.listFiles()).to.eventually.be.rejected;
+        });
+
+        it("resolves to empty array for nonexistent path", function () {
+            const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, "subdir"));
+            return expect(obj.listFiles()).to.eventually.be.an("array")
+                .that.is.empty;
+        });
+
     });
 
     describe("#createReadStream()", function () {

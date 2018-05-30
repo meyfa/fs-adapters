@@ -4,7 +4,8 @@
   "description": "Minimal interfaces for file system abstraction",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --recursive"
+    "test": "mocha --recursive",
+    "coverage": "nyc --reporter=lcov mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,8 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^11.8.0"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
