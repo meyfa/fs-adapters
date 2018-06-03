@@ -87,6 +87,25 @@ describe("lib/directory.js", function () {
 
     });
 
+    describe("#exists()", function () {
+
+        it("returns false for a non-existant file", function () {
+            const obj = new DirectoryAdapter(RESOURCES_DIR);
+            return expect(obj.exists("doesnotexist.txt")).to.eventually.equal(false);
+        });
+
+        it("returns true for an existing file", function () {
+            const obj = new DirectoryAdapter(RESOURCES_DIR);
+            return expect(obj.exists("test.txt")).to.eventually.equal(true);
+        });
+
+        it("rejects when given nothing", function () {
+            const obj = new DirectoryAdapter(RESOURCES_DIR);
+            return expect(obj.exists()).to.eventually.be.rejected;
+        });
+
+    });
+
     describe("#createReadStream()", function () {
 
         it("throws for missing files", function () {
