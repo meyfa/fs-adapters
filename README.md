@@ -31,6 +31,12 @@ Obtain a list of file names accessible through the adapter.
 
 **Returns:** `Promise<string[]>` A Promise that resolves to a file name array.
 
+### `exists(fileName)`
+
+Checks whether the given file name exists.
+
+**Returns:** `Promise<boolean>` A promise returning whether or not this file exists.
+
 ### `createReadStream(fileName)`
 
 Create a read stream for the given file name.

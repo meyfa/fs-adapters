@@ -44,6 +44,27 @@ describe("lib/memory.js", function () {
 
     });
 
+    describe("#exists()", function () {
+
+        it("returns false for a non-existant file", function () {
+            const obj = new MemoryAdapter();
+            return expect(obj.exists("foo")).to.eventually.equal(false);
+        });
+
+        it("returns false when given nothing", function () {
+            const obj = new MemoryAdapter();
+            return expect(obj.exists()).to.eventually.equal(false);
+        });
+
+        it("returns true for an existing file", function () {
+            const obj = new MemoryAdapter({
+                "foo": Buffer.alloc(0),
+            });
+            return expect(obj.exists("foo")).to.eventually.equal(true);
+        });
+
+    });
+
     describe("#createReadStream()", function () {
 
         it("throws for missing files", function () {
