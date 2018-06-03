@@ -35,6 +35,7 @@ Obtain a list of file names accessible through the adapter.
 
 Checks whether the given file name exists.
 
+**Parameter `fileName`:** The name of the file to check.<br />
 **Returns:** `Promise<boolean>` A promise returning whether or not this file exists.
 
 ### `createReadStream(fileName)`
