@@ -8,14 +8,6 @@ const MemoryAdapter = require("../lib/memory.js");
 
 describe("lib/memory.js", function () {
 
-    describe("constructor", function () {
-
-        it("instantiates when invoked as a function", function () {
-            expect(MemoryAdapter()).to.be.instanceOf(MemoryAdapter);
-        });
-
-    });
-
     describe("#init()", function () {
 
         it("returns a Promise", function () {

@@ -24,14 +24,17 @@
     "url": "https://github.com/meyfa/fs-adapters/issues"
   },
   "homepage": "https://github.com/meyfa/fs-adapters",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^5.2.0",
-    "nyc": "^11.8.0"
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1"
   },
   "dependencies": {
-    "bluebird": "^3.5.1",
+    "bluebird": "^3.7.1",
     "stream-buffers": "^3.0.2"
   }
 }

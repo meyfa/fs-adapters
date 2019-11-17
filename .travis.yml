@@ -1,9 +1,10 @@
 language: node_js
 node_js:
   - "node"
-  - "6"
-  - "5"
-  - "4"
+  - "13"
+  - "12"
+  - "10"
+  - "8"
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

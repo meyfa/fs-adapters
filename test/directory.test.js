@@ -12,15 +12,6 @@ const DirectoryAdapter = require("../lib/directory.js");
 
 describe("lib/directory.js", function () {
 
-    describe("constructor", function () {
-
-        it("instantiates when invoked as a function", function () {
-            expect(DirectoryAdapter(RESOURCES_DIR))
-                .to.be.instanceOf(DirectoryAdapter);
-        });
-
-    });
-
     describe("#_resolve()", function () {
 
         it("throws when resolving to base directory itself", function () {
