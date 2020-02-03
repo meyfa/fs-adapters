@@ -5,6 +5,7 @@ chai.use(require("chai-as-promised"));
 const expect = chai.expect;
 
 const path = require("path");
+const fs = require("fs");
 
 const RESOURCES_DIR = path.join(__dirname, "res");
 
@@ -170,6 +171,13 @@ describe("lib/directory.js", function () {
             const obj = new DirectoryAdapter(RESOURCES_DIR);
             return expect(obj.delete("doesnotexist.txt"))
                 .to.eventually.be.rejected;
+        });
+
+        it("succeeds for existing files", function () {
+            fs.openSync(path.join(RESOURCES_DIR, "foo.bin"), "w");
+            const obj = new DirectoryAdapter(RESOURCES_DIR);
+            return expect(obj.delete("foo.bin"))
+                .to.eventually.be.fulfilled;
         });
 
     });
