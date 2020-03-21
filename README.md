@@ -7,7 +7,6 @@
 Minimal JavaScript interfaces for file system abstraction
 
 
-
 ## Install
 
 ```
@@ -15,28 +14,42 @@ npm i fs-adapters
 ```
 
 
-
 ## Specification
 
-### `init()`
+### `async init()`
 
 Initialize the adapter. This would create the underlying directory, for example,
 or connect to the storage API, etc.
 
 **Returns:** `Promise` A Promise for when initialization is done.
 
-### `listFiles()`
+### `async listFiles()`
 
 Obtain a list of file names accessible through the adapter.
 
 **Returns:** `Promise<string[]>` A Promise that resolves to a file name array.
 
-### `exists(fileName)`
+### `async exists(fileName)`
 
 Checks whether the given file name exists.
 
 **Parameter `fileName`:** The name of the file to check.<br />
 **Returns:** `Promise<boolean>` A promise returning whether or not this file exists.
+
+### `async rename(fileName, newFileName)`
+
+Rename a file.
+
+**Parameter `fileName`:** The old file name.<br />
+**Parameter `newFileName`:** The new file name.<br />
+**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
+
+### `async delete(fileName)`
+
+Delete a file.
+
+**Parameter `fileName`:** The name of the file to delete.<br />
+**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
 
 ### `createReadStream(fileName)`
 
@@ -52,22 +65,6 @@ Create a write stream for the given file name.
 **Parameter `fileName`:** The name of the file to write.<br />
 **Returns:** `stream.Readable` A writable stream for the file.
 
-### `rename(fileName, newFileName)`
-
-Rename a file.
-
-**Parameter `fileName`:** The old file name.<br />
-**Parameter `newFileName`:** The new file name.<br />
-**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
-
-### `delete(fileName)`
-
-Delete a file.
-
-**Parameter `fileName`:** The name of the file to delete.<br />
-**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
-
-
 
 ## Implementations
 
@@ -80,7 +77,7 @@ and highly suitable for test scenarios, for example.
 #### Constructor
 
 ```javascript
-MemoryAdapter(initialFiles)
+new MemoryAdapter(initialFiles)
 ```
 
 **Parameter `initialFiles`:** (optional) An object mapping file names to their
@@ -89,18 +86,18 @@ contents (instances of `Buffer`).
 #### Usage Example
 
 ```javascript
-const MemoryAdapter = require("fs-adapters").MemoryAdapter;
+const MemoryAdapter = require('fs-adapters').MemoryAdapter
 
-let adapter = new MemoryAdapter({
-    "foo.txt": Buffer.from("hello world", "utf8"),
-    "empty.bin": Buffer.alloc(0),
-});
+const adapter = new MemoryAdapter({
+  'foo.txt': Buffer.from('hello world', 'utf8'),
+  'empty.bin': Buffer.alloc(0)
+})
 
 adapter.init().then(() => {
-    adapter.listFiles().then((files) => {
-        console.log(files); // ["foo.txt", "empty.bin"]
-    });
-});
+  adapter.listFiles().then((files) => {
+    console.log(files) // ['foo.txt', 'empty.bin']
+  })
+})
 ```
 
 ### DirectoryAdapter
@@ -113,7 +110,7 @@ results in an error.
 #### Constructor
 
 ```javascript
-DirectoryAdapter(directory)
+new DirectoryAdapter(directory)
 ```
 
 **Parameter `directory`:** The absolute path to the base directory.
@@ -121,13 +118,13 @@ DirectoryAdapter(directory)
 #### Usage Example
 
 ```javascript
-const DirectoryAdapter = require("fs-adapters").DirectoryAdapter;
-const path = require("path");
+const DirectoryAdapter = require('fs-adapters').DirectoryAdapter
+const path = require('path')
 
-let directory = path.join(__dirname, "data");
-let adapter = new DirectoryAdapter(directory);
+const directory = path.join(__dirname, 'data')
+const adapter = new DirectoryAdapter(directory)
 
 adapter.init().then(() => {
-    // do something with adapter
-});
+  // do something with adapter
+})
 ```
