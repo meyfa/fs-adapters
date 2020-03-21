@@ -141,6 +141,16 @@ describe('lib/memory.js', function () {
         })
       })
     })
+
+    it('does nothing if name stays the same', function () {
+      const obj = new MemoryAdapter({
+        foo: Buffer.alloc(0)
+      })
+      return obj.rename('foo', 'foo').then(() => {
+        return expect(obj.listFiles())
+          .to.eventually.deep.equal(['foo'])
+      })
+    })
   })
 
   describe('#delete()', function () {
