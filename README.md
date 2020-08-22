@@ -53,7 +53,9 @@ Delete a file.
 
 ### `createReadStream(fileName)`
 
-Create a read stream for the given file name.
+Create a read stream for the given file name. This should be preferred over
+`read()` when the file is potentially large or does not need to be in memory all
+at once.
 
 **Parameter `fileName`:** The name of the file to read.<br />
 **Returns:** `stream.Readable` A readable stream for the file.
@@ -64,6 +66,21 @@ Create a write stream for the given file name.
 
 **Parameter `fileName`:** The name of the file to write.<br />
 **Returns:** `stream.Readable` A writable stream for the file.
+
+## `async read(fileName)`
+
+Read the file whole, resolving to its contents as a Buffer.
+
+**Parameter `fileName`:** The name of the file to read.<br />
+**Returns:** `Promise` A Promise that resolves to the file contents, or rejects on error.
+
+## `async write(fileName, data)`
+
+Write to the given file name in one go.
+
+**Parameter `fileName`:** The name of the file to read.<br />
+**Parameter `data`:** The file contents to write (a Buffer).<br />
+**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
 
 
 ## Implementations

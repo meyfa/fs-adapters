@@ -173,4 +173,42 @@ describe('lib/memory.js', function () {
       stream.end()
     })
   })
+
+  describe('#read()', function () {
+    it('rejects for missing files', function () {
+      const obj = new MemoryAdapter()
+      return expect(obj.read('foo')).to.eventually.be.rejected
+    })
+
+    it('reads existing files', function () {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new MemoryAdapter({
+        foo: data
+      })
+      return expect(obj.read('foo')).to.eventually.satisfy(d => data.equals(d))
+    })
+  })
+
+  describe('#write()', function () {
+    it('writes data', function (done) {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new MemoryAdapter()
+      expect(obj.write('foo', data)).to.eventually.be.fulfilled.then(() => {
+        const read = obj.createReadStream('foo')
+        read.on('data', function (chunk) {
+          const expected = Buffer.from('hello world', 'utf8')
+          expect(chunk).to.satisfy((c) => expected.equals(c))
+          done()
+        })
+      })
+    })
+
+    it('adds to the list of files', function () {
+      const obj = new MemoryAdapter()
+      return obj.write('foo', Buffer.alloc(0)).then(() => {
+        return expect(obj.listFiles()).to.eventually.be.an('array')
+          .with.members(['foo'])
+      })
+    })
+  })
 })

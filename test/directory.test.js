@@ -182,4 +182,29 @@ describe('lib/directory.js', function () {
       stream.end(data)
     })
   })
+
+  describe('#read()', function () {
+    it('rejects for missing files', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.read('doesnotexist.txt')).to.eventually.be.rejected
+    })
+
+    it('reads existing files', function () {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.read('test.txt'))
+        .to.eventually.satisfy(d => data.equals(d))
+    })
+  })
+
+  describe('#write()', function () {
+    it('writes data', function () {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.write('foo.bin', data)).to.eventually.be.fulfilled.then(() => {
+        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+        return expect(writtenData).to.satisfy((c) => data.equals(c))
+      })
+    })
+  })
 })
