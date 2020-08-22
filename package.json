@@ -40,7 +40,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^8.1.1",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
     "stream-buffers": "^3.0.2"

@@ -6,6 +6,7 @@ const expect = chai.expect
 
 const path = require('path')
 const fs = require('fs')
+const rimraf = require('rimraf')
 
 const RESOURCES_DIR = path.join(__dirname, 'res')
 
@@ -13,6 +14,16 @@ const Adapter = require('../lib/base.js')
 const DirectoryAdapter = require('../lib/directory.js')
 
 describe('lib/directory.js', function () {
+  beforeEach(function () {
+    rimraf.sync(RESOURCES_DIR)
+    fs.mkdirSync(RESOURCES_DIR)
+    fs.writeFileSync(path.join(RESOURCES_DIR, 'test.txt'), 'hello world')
+  })
+
+  after(function () {
+    rimraf.sync(RESOURCES_DIR)
+  })
+
   it('extends Adapter', function () {
     expect(DirectoryAdapter.prototype).to.be.instanceOf(Adapter)
   })
@@ -103,7 +114,7 @@ describe('lib/directory.js', function () {
 
     it('succeeds for existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('foo.bin', 'foo.bin'))
+      return expect(obj.rename('test.txt', 'test.txt'))
         .to.eventually.be.fulfilled
     })
   })
@@ -116,9 +127,8 @@ describe('lib/directory.js', function () {
     })
 
     it('succeeds for existing files', function () {
-      fs.openSync(path.join(RESOURCES_DIR, 'foo.bin'), 'w')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.delete('foo.bin'))
+      return expect(obj.delete('test.txt'))
         .to.eventually.be.fulfilled
     })
   })
@@ -131,9 +141,11 @@ describe('lib/directory.js', function () {
 
     it('obtains readable streams for existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.createReadStream('test.txt'))
+      const stream = obj.createReadStream('test.txt')
+      expect(stream)
         .to.be.an('object')
         .with.property('read').that.is.a('function')
+      stream.destroy()
     })
 
     it('reads data', function (done) {
@@ -142,6 +154,7 @@ describe('lib/directory.js', function () {
       const stream = obj.createReadStream('test.txt')
       stream.on('data', function (chunk) {
         expect(chunk).to.satisfy((c) => expected.equals(c))
+        stream.destroy()
         done()
       })
     })
@@ -150,9 +163,11 @@ describe('lib/directory.js', function () {
   describe('#createWriteStream()', function () {
     it('returns writable streams', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.createWriteStream('foo.bin'))
+      const stream = obj.createWriteStream('foo.bin')
+      expect(stream)
         .to.be.an('object')
         .with.property('write').that.is.a('function')
+      stream.destroy()
     })
 
     it('writes data', function (done) {
@@ -160,11 +175,9 @@ describe('lib/directory.js', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createWriteStream('foo.bin')
       stream.on('finish', function () {
-        const read = obj.createReadStream('foo.bin')
-        read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c) => data.equals(c))
-          done()
-        })
+        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+        expect(writtenData).to.satisfy((c) => data.equals(c))
+        done()
       })
       stream.end(data)
     })
