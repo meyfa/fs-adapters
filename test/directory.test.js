@@ -9,9 +9,14 @@ const fs = require('fs')
 
 const RESOURCES_DIR = path.join(__dirname, 'res')
 
+const Adapter = require('../lib/base.js')
 const DirectoryAdapter = require('../lib/directory.js')
 
 describe('lib/directory.js', function () {
+  it('extends Adapter', function () {
+    expect(DirectoryAdapter.prototype).to.be.instanceOf(Adapter)
+  })
+
   describe('#_resolve()', function () {
     it('throws when resolving to base directory itself', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)

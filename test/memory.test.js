@@ -4,9 +4,14 @@ const chai = require('chai')
 chai.use(require('chai-as-promised'))
 const expect = chai.expect
 
+const Adapter = require('../lib/base.js')
 const MemoryAdapter = require('../lib/memory.js')
 
 describe('lib/memory.js', function () {
+  it('extends Adapter', function () {
+    expect(MemoryAdapter.prototype).to.be.instanceOf(Adapter)
+  })
+
   describe('#init()', function () {
     it('returns a Promise', function () {
       const obj = new MemoryAdapter()

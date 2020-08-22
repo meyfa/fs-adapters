@@ -128,3 +128,24 @@ adapter.init().then(() => {
   // do something with adapter
 })
 ```
+
+
+## Extending
+
+This is a loose specification, and JavaScript is a weakly typed language. As
+such, creating a new adapter is as simple as writing a class with the specified
+methods.
+
+Yet, to facilitate implementation and ensure perfect interoperability between
+adapters, it is recommended for adapter implementations to extend the common
+subclass `Adapter`. Example:
+
+```js
+const FSAdapter = require('fs-adapters').Adapter
+
+class CustomAdapter extends FSAdapter {
+  // implement methods here
+}
+```
+
+The default implementations supplied within this package all extend `Adapter`.
