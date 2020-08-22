@@ -55,6 +55,63 @@ describe('lib/memory.js', function () {
     })
   })
 
+  describe('#rename()', function () {
+    it('rejects for nonexistent files', function () {
+      const obj = new MemoryAdapter()
+      return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
+    })
+
+    it('renames files', function () {
+      const obj = new MemoryAdapter({
+        foo: Buffer.alloc(0)
+      })
+      return obj.rename('foo', 'bar').then(() => {
+        return expect(obj.listFiles())
+          .to.eventually.include('bar').but.not.include('foo')
+      })
+    })
+
+    it('keeps contents', function (done) {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new MemoryAdapter({
+        foo: data
+      })
+      obj.rename('foo', 'bar').then(() => {
+        const read = obj.createReadStream('bar')
+        read.on('data', function (chunk) {
+          expect(chunk).to.satisfy((c) => data.equals(c))
+          done()
+        })
+      })
+    })
+
+    it('does nothing if name stays the same', function () {
+      const obj = new MemoryAdapter({
+        foo: Buffer.alloc(0)
+      })
+      return obj.rename('foo', 'foo').then(() => {
+        return expect(obj.listFiles())
+          .to.eventually.deep.equal(['foo'])
+      })
+    })
+  })
+
+  describe('#delete()', function () {
+    it('rejects for nonexistent files', function () {
+      const obj = new MemoryAdapter()
+      return expect(obj.delete('foo')).to.eventually.be.rejected
+    })
+
+    it('deletes files', function () {
+      const obj = new MemoryAdapter({
+        foo: Buffer.alloc(0)
+      })
+      return obj.delete('foo').then(() => {
+        return expect(obj.listFiles()).to.eventually.not.include('foo')
+      })
+    })
+  })
+
   describe('#createReadStream()', function () {
     it('throws for missing files', function () {
       const obj = new MemoryAdapter()
@@ -114,63 +171,6 @@ describe('lib/memory.js', function () {
           .notify(done)
       })
       stream.end()
-    })
-  })
-
-  describe('#rename()', function () {
-    it('rejects for nonexistent files', function () {
-      const obj = new MemoryAdapter()
-      return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
-    })
-
-    it('renames files', function () {
-      const obj = new MemoryAdapter({
-        foo: Buffer.alloc(0)
-      })
-      return obj.rename('foo', 'bar').then(() => {
-        return expect(obj.listFiles())
-          .to.eventually.include('bar').but.not.include('foo')
-      })
-    })
-
-    it('keeps contents', function (done) {
-      const data = Buffer.from('hello world', 'utf8')
-      const obj = new MemoryAdapter({
-        foo: data
-      })
-      obj.rename('foo', 'bar').then(() => {
-        const read = obj.createReadStream('bar')
-        read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c) => data.equals(c))
-          done()
-        })
-      })
-    })
-
-    it('does nothing if name stays the same', function () {
-      const obj = new MemoryAdapter({
-        foo: Buffer.alloc(0)
-      })
-      return obj.rename('foo', 'foo').then(() => {
-        return expect(obj.listFiles())
-          .to.eventually.deep.equal(['foo'])
-      })
-    })
-  })
-
-  describe('#delete()', function () {
-    it('rejects for nonexistent files', function () {
-      const obj = new MemoryAdapter()
-      return expect(obj.delete('foo')).to.eventually.be.rejected
-    })
-
-    it('deletes files', function () {
-      const obj = new MemoryAdapter({
-        foo: Buffer.alloc(0)
-      })
-      return obj.delete('foo').then(() => {
-        return expect(obj.listFiles()).to.eventually.not.include('foo')
-      })
     })
   })
 })

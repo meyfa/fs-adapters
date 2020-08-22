@@ -94,6 +94,35 @@ describe('lib/directory.js', function () {
     })
   })
 
+  describe('#rename()', function () {
+    it('rejects for nonexistent files', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.rename('doesnotexist.txt', 'bar.txt'))
+        .to.eventually.be.rejected
+    })
+
+    it('succeeds for existing files', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.rename('foo.bin', 'foo.bin'))
+        .to.eventually.be.fulfilled
+    })
+  })
+
+  describe('#delete()', function () {
+    it('rejects for nonexistent files', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.delete('doesnotexist.txt'))
+        .to.eventually.be.rejected
+    })
+
+    it('succeeds for existing files', function () {
+      fs.openSync(path.join(RESOURCES_DIR, 'foo.bin'), 'w')
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.delete('foo.bin'))
+        .to.eventually.be.fulfilled
+    })
+  })
+
   describe('#createReadStream()', function () {
     it('throws for missing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
@@ -138,35 +167,6 @@ describe('lib/directory.js', function () {
         })
       })
       stream.end(data)
-    })
-  })
-
-  describe('#rename()', function () {
-    it('rejects for nonexistent files', function () {
-      const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('doesnotexist.txt', 'bar.txt'))
-        .to.eventually.be.rejected
-    })
-
-    it('succeeds for existing files', function () {
-      const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('foo.bin', 'foo.bin'))
-        .to.eventually.be.fulfilled
-    })
-  })
-
-  describe('#delete()', function () {
-    it('rejects for nonexistent files', function () {
-      const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.delete('doesnotexist.txt'))
-        .to.eventually.be.rejected
-    })
-
-    it('succeeds for existing files', function () {
-      fs.openSync(path.join(RESOURCES_DIR, 'foo.bin'), 'w')
-      const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.delete('foo.bin'))
-        .to.eventually.be.fulfilled
     })
   })
 })
