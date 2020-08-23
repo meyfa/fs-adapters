@@ -195,6 +195,19 @@ describe('lib/directory.js', function () {
       return expect(obj.read('test.txt'))
         .to.eventually.satisfy(d => data.equals(d))
     })
+
+    it('converts to string if passed an encoding', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.read('test.txt', { encoding: 'utf8' }))
+        .to.eventually.equal('hello world')
+    })
+
+    it('ignores empty options', function () {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.read('test.txt', {}))
+        .to.eventually.satisfy(d => data.equals(d))
+    })
   })
 
   describe('#write()', function () {
@@ -204,6 +217,33 @@ describe('lib/directory.js', function () {
       return expect(obj.write('foo.bin', data)).to.eventually.be.fulfilled.then(() => {
         const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
         return expect(writtenData).to.satisfy((c) => data.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: no options', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.write('foo.bin', 'hello world')).to.eventually.be.fulfilled.then(() => {
+        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+        const expected = Buffer.from('hello world', 'utf8')
+        return expect(writtenData).to.satisfy((c) => expected.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: empty options', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.write('foo.bin', 'hello world', {})).to.eventually.be.fulfilled.then(() => {
+        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+        const expected = Buffer.from('hello world', 'utf8')
+        return expect(writtenData).to.satisfy((c) => expected.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: explicit encoding option', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.write('foo.bin', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
+        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+        const expected = Buffer.from('hello world', 'utf16le')
+        return expect(writtenData).to.satisfy((c) => expected.equals(c))
       })
     })
   })

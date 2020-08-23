@@ -103,6 +103,19 @@ describe('lib/base.js', function () {
       const obj = new MockReadAdapter()
       return expect(obj.read('bar')).to.eventually.be.rejected
     })
+
+    it('converts to string if passed an encoding', function () {
+      const obj = new MockReadAdapter()
+      return expect(obj.read('foo', { encoding: 'utf8' }))
+        .to.eventually.equal('hello world')
+    })
+
+    it('ignores empty options', function () {
+      const obj = new MockReadAdapter()
+      return expect(obj.read('foo', {})).to.eventually.satisfy(c => {
+        return Buffer.from('hello world', 'utf8').equals(c)
+      })
+    })
   })
 
   describe('#write()', function () {
@@ -123,6 +136,30 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       obj.shouldThrow = true
       return expect(obj.write('foo', Buffer.alloc(0))).to.eventually.be.rejected
+    })
+
+    it('supports encodings for strings: no options', function () {
+      const obj = new MockWriteAdapter()
+      return expect(obj.write('foo', 'hello world')).to.eventually.be.fulfilled.then(() => {
+        const expected = Buffer.from('hello world', 'utf8')
+        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: empty options', function () {
+      const obj = new MockWriteAdapter()
+      return expect(obj.write('foo', 'hello world', {})).to.eventually.be.fulfilled.then(() => {
+        const expected = Buffer.from('hello world', 'utf8')
+        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: explicit encoding option', function () {
+      const obj = new MockWriteAdapter()
+      return expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
+        const expected = Buffer.from('hello world', 'utf16le')
+        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+      })
     })
   })
 })

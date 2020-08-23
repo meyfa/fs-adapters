@@ -67,19 +67,26 @@ Create a write stream for the given file name.
 **Parameter `fileName`:** The name of the file to write.<br />
 **Returns:** `stream.Readable` A writable stream for the file.
 
-## `async read(fileName)`
+## `async read(fileName[, options])`
 
-Read the file whole, resolving to its contents as a Buffer.
+Read the file whole, resolving to its contents as a Buffer. If an encoding is
+specified, this will convert the buffer to a string and resolve to that.
 
 **Parameter `fileName`:** The name of the file to read.<br />
+**Parameter `options`:** An object with the following keys (all optional):
+- `encoding`: encoding to use for string conversion. Default: `null`
+
 **Returns:** `Promise` A Promise that resolves to the file contents, or rejects on error.
 
-## `async write(fileName, data)`
+## `async write(fileName, data[, options])`
 
 Write to the given file name in one go.
 
 **Parameter `fileName`:** The name of the file to read.<br />
-**Parameter `data`:** The file contents to write (a Buffer).<br />
+**Parameter `data`:** The file contents to write (a Buffer or string).<br />
+**Parameter `options`:** An object with the following keys (all optional):
+- `encoding`: encoding to use if data is a string. Default: `'utf8'`
+
 **Returns:** `Promise` A Promise that resolves when done, or rejects on error.
 
 
