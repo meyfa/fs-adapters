@@ -21,35 +21,41 @@ npm i fs-adapters
 Initialize the adapter. This would create the underlying directory, for example,
 or connect to the storage API, etc.
 
-**Returns:** `Promise` A Promise for when initialization is done.
+- Returns: `<Promise>` A Promise for when initialization is done.
+
 
 ### `async listFiles()`
 
 Obtain a list of file names accessible through the adapter.
 
-**Returns:** `Promise<string[]>` A Promise that resolves to a file name array.
+- Returns: `<Promise<string[]>>` A Promise resolving to a file name array.
+
 
 ### `async exists(fileName)`
 
 Checks whether the given file name exists.
 
-**Parameter `fileName`:** The name of the file to check.<br />
-**Returns:** `Promise<boolean>` A promise returning whether or not this file exists.
+- **`fileName`** `<string>`: The name of the file to check.
+- Returns: `<Promise<boolean>>` A promise resolving to whether or not this file
+    exists.
+
 
 ### `async rename(fileName, newFileName)`
 
 Rename a file.
 
-**Parameter `fileName`:** The old file name.<br />
-**Parameter `newFileName`:** The new file name.<br />
-**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
+- **`fileName`** `<string>`: The old file name.
+- **`newFileName`** `<string>`: The new file name.
+- Returns: `<Promise>` A Promise that resolves when done, or rejects on error.
+
 
 ### `async delete(fileName)`
 
 Delete a file.
 
-**Parameter `fileName`:** The name of the file to delete.<br />
-**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
+- **`fileName`** `<string>` The name of the file to delete.
+- Returns: `<Promise>` A Promise that resolves when done, or rejects on error.
+
 
 ### `createReadStream(fileName)`
 
@@ -57,37 +63,41 @@ Create a read stream for the given file name. This should be preferred over
 `read()` when the file is potentially large or does not need to be in memory all
 at once.
 
-**Parameter `fileName`:** The name of the file to read.<br />
-**Returns:** `stream.Readable` A readable stream for the file.
+- **`fileName`** `<string>` The name of the file to read.
+- Returns: `<stream.Readable>` A readable stream for the file.
+
 
 ### `createWriteStream(fileName)`
 
 Create a write stream for the given file name.
 
-**Parameter `fileName`:** The name of the file to write.<br />
-**Returns:** `stream.Readable` A writable stream for the file.
+- **`fileName`** `<string>` The name of the file to write.
+- Returns: `<stream.Readable>` A writable stream for the file.
+
 
 ## `async read(fileName[, options])`
 
 Read the file whole, resolving to its contents as a Buffer. If an encoding is
 specified, this will convert the buffer to a string and resolve to that.
 
-**Parameter `fileName`:** The name of the file to read.<br />
-**Parameter `options`:** An object with the following keys (all optional):
-- `encoding`: encoding to use for string conversion. Default: `null`
+- **`fileName`** `<string>` The name of the file to read.
+- **`options`** `<object>`
+  - **`encoding`** `<string|null>`: encoding to use for string conversion.
+      Default: `null`
+- Returns: `<Promise<Buffer|string>>` A Promise that resolves to the file
+    contents, or rejects on error.
 
-**Returns:** `Promise` A Promise that resolves to the file contents, or rejects on error.
 
 ## `async write(fileName, data[, options])`
 
 Write to the given file name in one go.
 
-**Parameter `fileName`:** The name of the file to read.<br />
-**Parameter `data`:** The file contents to write (a Buffer or string).<br />
-**Parameter `options`:** An object with the following keys (all optional):
-- `encoding`: encoding to use if data is a string. Default: `'utf8'`
-
-**Returns:** `Promise` A Promise that resolves when done, or rejects on error.
+- **`fileName`** `<string>` The name of the file to read.
+- **`data`** `<Buffer|string>` The file contents to write.
+- **`options`** `<object>`
+  - **`encoding`** `<string>`: encoding to use if data is a string.
+      Default: `'utf8'`
+- Returns: `<Promise>` A Promise that resolves when done, or rejects on error.
 
 
 ## Implementations
@@ -98,19 +108,20 @@ This adapter implements the above specification by storing all data and metadata
 in the process memory. It is therefore not dependent on the actual file system
 and highly suitable for test scenarios, for example.
 
-#### Constructor
+#### Constructors
 
 ```javascript
+new MemoryAdapter()
 new MemoryAdapter(initialFiles)
 ```
 
-**Parameter `initialFiles`:** (optional) An object mapping file names to their
-contents (instances of `Buffer`).
+- **`initialFiles`** `<object>` (optional) A mapping from file names to their
+    contents (instances of `Buffer`).
 
 #### Usage Example
 
 ```javascript
-const MemoryAdapter = require('fs-adapters').MemoryAdapter
+const { MemoryAdapter } = require('fs-adapters')
 
 const adapter = new MemoryAdapter({
   'foo.txt': Buffer.from('hello world', 'utf8'),
@@ -131,18 +142,18 @@ are interpreted as relative to the base directory, and navigating outside that
 directory (e.g. via `..`) or accessing the directory itself (e.g. via `.`)
 results in an error.
 
-#### Constructor
+#### Constructors
 
 ```javascript
 new DirectoryAdapter(directory)
 ```
 
-**Parameter `directory`:** The absolute path to the base directory.
+- **`directory`** `<string>` The absolute path to the base directory.
 
 #### Usage Example
 
 ```javascript
-const DirectoryAdapter = require('fs-adapters').DirectoryAdapter
+const { DirectoryAdapter } = require('fs-adapters')
 const path = require('path')
 
 const directory = path.join(__dirname, 'data')
@@ -161,8 +172,9 @@ such, creating a new adapter is as simple as writing a class with the specified
 methods.
 
 Yet, to facilitate implementation and ensure perfect interoperability between
-adapters, it is recommended for adapter implementations to extend the common
-subclass `Adapter`. Example:
+adapters, it is recommended that implementers extend the common superclass
+`Adapter`. All implementations supplied with this package (MemoryAdapter,
+DirectoryAdapter) do this. Example:
 
 ```js
 const FSAdapter = require('fs-adapters').Adapter
@@ -172,4 +184,11 @@ class CustomAdapter extends FSAdapter {
 }
 ```
 
-The default implementations supplied within this package all extend `Adapter`.
+The `Adapter` class provides default implementations for the following methods:
+
+- `init()`: does nothing by default
+- `read(...)`: creates a read stream and wraps it into a promise
+- `write(...)`: creates a write stream and wraps it into a promise
+
+It is recommended that implementers override these default implementations when
+they can provide something more efficient.
