@@ -134,9 +134,14 @@ describe('lib/directory.js', function () {
   })
 
   describe('#createReadStream()', function () {
-    it('throws for missing files', function () {
+    it('obtains a stream that errors for missing files', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(() => obj.createReadStream('doesnotexist.txt')).to.throw()
+      const stream = obj.createReadStream('doesnotexist.txt')
+      expect(stream).to.be.an('object')
+      stream.on('error', err => {
+        expect(err).to.be.an('error').with.property('code', 'ENOENT')
+        done()
+      })
     })
 
     it('obtains readable streams for existing files', function () {
