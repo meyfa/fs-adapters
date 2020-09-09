@@ -75,14 +75,14 @@ describe('lib/base.js', function () {
   describe('#createReadStream()', function () {
     it('throws', function () {
       const obj = new Adapter()
-      return expect(() => obj.createReadStream('foo')).to.throw
+      return expect(() => obj.createReadStream('foo')).to.throw()
     })
   })
 
   describe('#createWriteStream()', function () {
     it('throws', function () {
       const obj = new Adapter()
-      return expect(() => obj.createWriteStream('foo')).to.throw
+      return expect(() => obj.createWriteStream('foo')).to.throw()
     })
   })
 

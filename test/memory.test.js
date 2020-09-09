@@ -115,7 +115,7 @@ describe('lib/memory.js', function () {
   describe('#createReadStream()', function () {
     it('throws for missing files', function () {
       const obj = new MemoryAdapter()
-      return expect(() => obj.createReadStream('foo')).to.throw
+      return expect(() => obj.createReadStream('foo')).to.throw()
     })
 
     it('obtains readable streams for existing files', function () {
