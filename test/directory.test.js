@@ -39,19 +39,19 @@ describe('lib/directory.js', function () {
       expect(() => obj._resolve(RESOURCES_DIR)).to.throw()
     })
 
-    it('throws when resolving to a parent directory', function () {
+    it('throws when resolving to parent directories', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       expect(() => obj._resolve('..')).to.throw()
       expect(() => obj._resolve('../../')).to.throw()
     })
 
-    it('throws when resolving some other file', function () {
+    it('throws when resolving files outside base directory', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       expect(() => obj._resolve('../directory.test.js')).to.throw()
       expect(() => obj._resolve('foo/../../directory.test.js')).to.throw()
     })
 
-    it('throws when resolving an absolute path', function () {
+    it('throws when resolving absolute paths', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       expect(() => obj._resolve(RESOURCES_DIR + '/foo.bin')).to.throw()
     })
@@ -76,12 +76,12 @@ describe('lib/directory.js', function () {
         .that.includes('test.txt')
     })
 
-    it('rejects when given a file path', function () {
+    it('rejects for base paths that are files', function () {
       const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'test.txt'))
       return expect(obj.listFiles()).to.eventually.be.rejected
     })
 
-    it('resolves to empty array for nonexistent path', function () {
+    it('resolves to empty array for non-existent base directory', function () {
       const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'subdir'))
       return expect(obj.listFiles()).to.eventually.be.an('array')
         .that.is.empty
@@ -89,12 +89,12 @@ describe('lib/directory.js', function () {
   })
 
   describe('#exists()', function () {
-    it('returns false for a non-existant file', function () {
+    it('returns false for non-existent files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.exists('doesnotexist.txt')).to.eventually.equal(false)
     })
 
-    it('returns true for an existing file', function () {
+    it('returns true for existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.exists('test.txt')).to.eventually.equal(true)
     })
@@ -106,7 +106,7 @@ describe('lib/directory.js', function () {
   })
 
   describe('#rename()', function () {
-    it('rejects for nonexistent files', function () {
+    it('rejects for missing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.rename('doesnotexist.txt', 'bar.txt'))
         .to.eventually.be.rejected
@@ -120,7 +120,7 @@ describe('lib/directory.js', function () {
   })
 
   describe('#delete()', function () {
-    it('rejects for nonexistent files', function () {
+    it('rejects for missing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.delete('doesnotexist.txt'))
         .to.eventually.be.rejected

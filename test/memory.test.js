@@ -37,7 +37,7 @@ describe('lib/memory.js', function () {
   })
 
   describe('#exists()', function () {
-    it('returns false for a non-existant file', function () {
+    it('returns false for missing files', function () {
       const obj = new MemoryAdapter()
       return expect(obj.exists('foo')).to.eventually.equal(false)
     })
@@ -47,7 +47,7 @@ describe('lib/memory.js', function () {
       return expect(obj.exists()).to.eventually.equal(false)
     })
 
-    it('returns true for an existing file', function () {
+    it('returns true for existing files', function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
@@ -56,7 +56,7 @@ describe('lib/memory.js', function () {
   })
 
   describe('#rename()', function () {
-    it('rejects for nonexistent files', function () {
+    it('rejects for missing files', function () {
       const obj = new MemoryAdapter()
       return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
     })
@@ -97,7 +97,7 @@ describe('lib/memory.js', function () {
   })
 
   describe('#delete()', function () {
-    it('rejects for nonexistent files', function () {
+    it('rejects for missing files', function () {
       const obj = new MemoryAdapter()
       return expect(obj.delete('foo')).to.eventually.be.rejected
     })
