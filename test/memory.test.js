@@ -127,7 +127,7 @@ describe('lib/memory.js', function () {
         .with.property('read').that.is.a('function')
     })
 
-    it('reads data', function (done) {
+    it('allows reading data', function (done) {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
@@ -148,7 +148,7 @@ describe('lib/memory.js', function () {
         .with.property('write').that.is.a('function')
     })
 
-    it('writes data', function (done) {
+    it('allows writing data', function (done) {
       const obj = new MemoryAdapter()
       const stream = obj.createWriteStream('foo')
       stream.on('finish', function () {

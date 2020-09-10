@@ -9,6 +9,7 @@ const fs = require('fs')
 const rimraf = require('rimraf')
 
 const RESOURCES_DIR = path.join(__dirname, 'res')
+const NON_EXISTENT_DIR = path.join(__dirname, 'res', 'noex')
 
 const Adapter = require('../lib/base.js')
 const DirectoryAdapter = require('../lib/directory.js')
@@ -62,6 +63,14 @@ describe('lib/directory.js', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.init()).to.eventually.be.fulfilled
     })
+
+    it('creates base directory if necessary', function () {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      return expect(obj.init()).to.eventually.be.fulfilled.then(() => {
+        return expect(fs.promises.lstat(NON_EXISTENT_DIR)).to.eventually.be.fulfilled
+          .and.satisfy(stats => stats.isDirectory())
+      })
+    })
   })
 
   describe('#listFiles()', function () {
@@ -73,7 +82,7 @@ describe('lib/directory.js', function () {
     it('includes existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.listFiles()).to.eventually.be.an('array')
-        .that.includes('test.txt')
+        .with.members(['test.txt'])
     })
 
     it('rejects for base paths that are files', function () {
@@ -82,7 +91,7 @@ describe('lib/directory.js', function () {
     })
 
     it('resolves to empty array for non-existent base directory', function () {
-      const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'subdir'))
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
       return expect(obj.listFiles()).to.eventually.be.an('array')
         .that.is.empty
     })
@@ -92,6 +101,11 @@ describe('lib/directory.js', function () {
     it('returns false for non-existent files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.exists('doesnotexist.txt')).to.eventually.equal(false)
+    })
+
+    it('returns false for non-existent base directory', function () {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      return expect(obj.exists('test.txt')).to.eventually.equal(false)
     })
 
     it('returns true for existing files', function () {
@@ -106,10 +120,18 @@ describe('lib/directory.js', function () {
   })
 
   describe('#rename()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.rename('doesnotexist.txt', 'bar.txt'))
         .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
+    it('rejects for non-existent base directory, with code=ENOENT', function () {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      return expect(obj.rename('test.txt', 'bar.txt'))
+        .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('succeeds for existing files', function () {
@@ -120,10 +142,18 @@ describe('lib/directory.js', function () {
   })
 
   describe('#delete()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.delete('doesnotexist.txt'))
         .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
+    it('rejects for non-existent base directory, with code=ENOENT', function () {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      return expect(obj.delete('test.txt'))
+        .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('succeeds for existing files', function () {
@@ -134,9 +164,19 @@ describe('lib/directory.js', function () {
   })
 
   describe('#createReadStream()', function () {
-    it('obtains a stream that errors for missing files', function (done) {
+    it('obtains a stream that errors for missing files, with code=ENOENT', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('doesnotexist.txt')
+      expect(stream).to.be.an('object')
+      stream.on('error', err => {
+        expect(err).to.be.an('error').with.property('code', 'ENOENT')
+        done()
+      })
+    })
+
+    it('obtains a stream that errors for non-existent base directory, with code=ENOENT', function (done) {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      const stream = obj.createReadStream('test.txt')
       expect(stream).to.be.an('object')
       stream.on('error', err => {
         expect(err).to.be.an('error').with.property('code', 'ENOENT')
@@ -153,7 +193,7 @@ describe('lib/directory.js', function () {
       stream.destroy()
     })
 
-    it('reads data', function (done) {
+    it('allows reading data', function (done) {
       const expected = Buffer.from('hello world', 'utf8')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('test.txt')
@@ -175,7 +215,7 @@ describe('lib/directory.js', function () {
       stream.destroy()
     })
 
-    it('writes data', function (done) {
+    it('allows writing data', function (done) {
       const data = Buffer.from('t' + Date.now(), 'utf8')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createWriteStream('foo.bin')
@@ -189,9 +229,16 @@ describe('lib/directory.js', function () {
   })
 
   describe('#read()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.read('doesnotexist.txt')).to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
+    it('rejects for non-existent base directory, with code=ENOENT', function () {
+      const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
+      return expect(obj.read('test.txt')).to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('reads existing files', function () {
