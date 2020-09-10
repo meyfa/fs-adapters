@@ -74,7 +74,7 @@ describe('lib/base.js', function () {
   describe('#rename()', function () {
     it('rejects', function () {
       const obj = new Adapter()
-      return expect(obj.exists('foo', 'bar')).to.eventually.be.rejected
+      return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
     })
   })
 
