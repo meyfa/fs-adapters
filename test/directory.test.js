@@ -71,6 +71,11 @@ describe('lib/directory.js', function () {
           .and.satisfy(stats => stats.isDirectory())
       })
     })
+
+    it('rejects if base path denotes a file', function () {
+      const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'test.txt'))
+      return expect(obj.init()).to.eventually.be.rejected
+    })
   })
 
   describe('#listFiles()', function () {
