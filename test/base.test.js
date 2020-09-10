@@ -14,9 +14,17 @@ class MockReadAdapter extends Adapter {
       throw new Error('expected file name to be "foo"')
     }
 
+    if (this.shouldThrow) {
+      throw new Error('error thrown during createReadStream')
+    }
+
     const stream = new ReadableStreamBuffer()
     stream.put(Buffer.from('hello world', 'utf8'))
     stream.stop()
+
+    if (this.shouldError) {
+      stream.destroy(new Error('error emitted with destroy'))
+    }
 
     return stream
   }
@@ -32,6 +40,11 @@ class MockWriteAdapter extends Adapter {
     stream.on('finish', () => {
       this.writtenData = stream.getContents()
     })
+    if (this.shouldError) {
+      stream._write = function (chunk, encoding, callback) {
+        callback(new Error('thrown during _write'))
+      }
+    }
     return stream
   }
 }
@@ -101,7 +114,14 @@ describe('lib/base.js', function () {
 
     it('rejects if createReadStream throws', function () {
       const obj = new MockReadAdapter()
-      return expect(obj.read('bar')).to.eventually.be.rejected
+      obj.shouldThrow = true
+      return expect(obj.read('foo')).to.eventually.be.rejected
+    })
+
+    it('rejects if the stream produces an error', function () {
+      const obj = new MockReadAdapter()
+      obj.shouldError = true
+      return expect(obj.read('foo')).to.eventually.be.rejected
     })
 
     it('converts to string if passed an encoding', function () {
@@ -135,6 +155,12 @@ describe('lib/base.js', function () {
     it('rejects if createWriteStream throws', function () {
       const obj = new MockWriteAdapter()
       obj.shouldThrow = true
+      return expect(obj.write('foo', Buffer.alloc(0))).to.eventually.be.rejected
+    })
+
+    it('rejects if the stream produces an error', function () {
+      const obj = new MockWriteAdapter()
+      obj.shouldError = true
       return expect(obj.write('foo', Buffer.alloc(0))).to.eventually.be.rejected
     })
 
