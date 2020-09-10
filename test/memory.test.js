@@ -56,9 +56,10 @@ describe('lib/memory.js', function () {
   })
 
   describe('#rename()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new MemoryAdapter()
       return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('renames files', function () {
@@ -107,9 +108,10 @@ describe('lib/memory.js', function () {
   })
 
   describe('#delete()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new MemoryAdapter()
       return expect(obj.delete('foo')).to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('deletes files', function () {
@@ -123,9 +125,10 @@ describe('lib/memory.js', function () {
   })
 
   describe('#createReadStream()', function () {
-    it('throws for missing files', function () {
+    it('throws for missing files, with code=ENOENT', function () {
       const obj = new MemoryAdapter()
       return expect(() => obj.createReadStream('foo')).to.throw()
+        .with.property('code', 'ENOENT')
     })
 
     it('obtains readable streams for existing files', function () {
@@ -191,9 +194,10 @@ describe('lib/memory.js', function () {
   })
 
   describe('#read()', function () {
-    it('rejects for missing files', function () {
+    it('rejects for missing files, with code=ENOENT', function () {
       const obj = new MemoryAdapter()
       return expect(obj.read('foo')).to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
     })
 
     it('reads existing files', function () {
