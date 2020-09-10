@@ -42,9 +42,9 @@ describe('lib/memory.js', function () {
       return expect(obj.exists('foo')).to.eventually.equal(false)
     })
 
-    it('returns false when given nothing', function () {
+    it('rejects when given nothing', function () {
       const obj = new MemoryAdapter()
-      return expect(obj.exists()).to.eventually.equal(false)
+      return expect(obj.exists()).to.eventually.be.rejected
     })
 
     it('returns true for existing files', function () {
@@ -93,6 +93,16 @@ describe('lib/memory.js', function () {
         return expect(obj.listFiles())
           .to.eventually.deep.equal(['foo'])
       })
+    })
+
+    it('rejects if new name is not a string or is empty', function () {
+      const obj = new MemoryAdapter({
+        foo: Buffer.alloc(0)
+      })
+      return Promise.all([
+        expect(obj.rename('foo', null)).to.eventually.be.rejected,
+        expect(obj.rename('foo', '')).to.eventually.be.rejected
+      ])
     })
   })
 
@@ -172,6 +182,12 @@ describe('lib/memory.js', function () {
       })
       stream.end()
     })
+
+    it('throws if name is not a string or is empty', function () {
+      const obj = new MemoryAdapter()
+      expect(() => obj.createWriteStream(null)).to.throw()
+      expect(() => obj.createWriteStream('')).to.throw()
+    })
   })
 
   describe('#read()', function () {
@@ -225,6 +241,14 @@ describe('lib/memory.js', function () {
         return expect(obj.listFiles()).to.eventually.be.an('array')
           .with.members(['foo'])
       })
+    })
+
+    it('rejects if name is not a string or is empty', function () {
+      const obj = new MemoryAdapter()
+      return Promise.all([
+        expect(obj.write(null, Buffer.alloc(0))).to.eventually.be.rejected,
+        expect(obj.write('', Buffer.alloc(0))).to.eventually.be.rejected
+      ])
     })
 
     it('supports encodings for strings: no options', function (done) {
