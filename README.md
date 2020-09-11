@@ -115,8 +115,8 @@ new MemoryAdapter()
 new MemoryAdapter(initialFiles)
 ```
 
-- **`initialFiles`** `<object>` (optional) A mapping from file names to their
-    contents (instances of `Buffer`).
+- **`initialFiles`** `<object | Map | Array[]>` (optional) A mapping from file
+  names to their contents (instances of `Buffer` or string data).
 
 #### Usage Example
 
@@ -127,6 +127,18 @@ const adapter = new MemoryAdapter({
   'foo.txt': Buffer.from('hello world', 'utf8'),
   'empty.bin': Buffer.alloc(0)
 })
+
+// alternatively:
+new MemoryAdapter(new Map([
+  ['foo.txt', Buffer.from('hello world', 'utf8')],
+  ['empty.bin', Buffer.alloc(0)]
+]))
+
+// or even:
+new MemoryAdapter([
+  ['foo.txt', 'hello world'],
+  ['empty.bin', Buffer.alloc(0)]
+])
 
 adapter.init().then(() => {
   adapter.listFiles().then((files) => {

@@ -25,7 +25,7 @@ describe('lib/memory.js', function () {
       return expect(obj.listFiles()).to.eventually.be.an('array')
     })
 
-    it('includes initial files', function () {
+    it('includes initial files, if given a plain object', function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0),
         'bar.tmp': Buffer.alloc(0),
@@ -33,6 +33,34 @@ describe('lib/memory.js', function () {
       })
       return expect(obj.listFiles()).to.eventually.be.an('array')
         .with.members(['foo', 'bar.tmp', 'baz'])
+    })
+
+    it('includes initial files, if given an Array', function () {
+      const obj = new MemoryAdapter([
+        ['foo', Buffer.alloc(0)],
+        ['bar.tmp', Buffer.alloc(0)],
+        ['baz', Buffer.alloc(0)]
+      ])
+      return expect(obj.listFiles()).to.eventually.be.an('array')
+        .with.members(['foo', 'bar.tmp', 'baz'])
+    })
+
+    it('includes initial files, if given a Map', function () {
+      const obj = new MemoryAdapter(new Map([
+        ['foo', Buffer.alloc(0)],
+        ['bar.tmp', Buffer.alloc(0)],
+        ['baz', Buffer.alloc(0)]
+      ]))
+      return expect(obj.listFiles()).to.eventually.be.an('array')
+        .with.members(['foo', 'bar.tmp', 'baz'])
+    })
+
+    it('converts string data to utf8 Buffer implicitly', function () {
+      const obj = new MemoryAdapter({
+        foo: 'hello world'
+      })
+      const data = Buffer.from('hello world', 'utf8')
+      return expect(obj.read('foo')).to.eventually.satisfy(d => data.equals(d))
     })
   })
 
