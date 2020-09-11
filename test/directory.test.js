@@ -113,14 +113,14 @@ describe('lib/directory.js', function () {
       return expect(obj.exists('test.txt')).to.eventually.equal(false)
     })
 
-    it('returns true for existing files', function () {
-      const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.exists('test.txt')).to.eventually.equal(true)
-    })
-
     it('rejects when given nothing', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.exists()).to.eventually.be.rejected
+    })
+
+    it('returns true for existing files', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.exists('test.txt')).to.eventually.equal(true)
     })
   })
 
@@ -141,8 +141,19 @@ describe('lib/directory.js', function () {
 
     it('succeeds for existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('test.txt', 'test.txt'))
-        .to.eventually.be.fulfilled
+      return expect(obj.rename('test.txt', 'renamed.txt'))
+        .to.eventually.be.fulfilled.then(() => {
+          return expect(fs.promises.readdir(RESOURCES_DIR))
+            .to.eventually.have.members(['renamed.txt'])
+        })
+    })
+
+    it('rejects if new name is not a string or is empty', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return Promise.all([
+        expect(obj.rename('test.txt', null)).to.eventually.be.rejected,
+        expect(obj.rename('test.txt', '')).to.eventually.be.rejected
+      ])
     })
   })
 
@@ -164,7 +175,9 @@ describe('lib/directory.js', function () {
     it('succeeds for existing files', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       return expect(obj.delete('test.txt'))
-        .to.eventually.be.fulfilled
+        .to.eventually.be.fulfilled.then(() => {
+          return expect(fs.promises.readdir(RESOURCES_DIR)).to.eventually.be.empty
+        })
     })
   })
 
@@ -231,6 +244,12 @@ describe('lib/directory.js', function () {
       })
       stream.end(data)
     })
+
+    it('throws if name is not a string or is empty', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      expect(() => obj.createWriteStream(null)).to.throw()
+      expect(() => obj.createWriteStream('')).to.throw()
+    })
   })
 
   describe('#read()', function () {
@@ -275,6 +294,14 @@ describe('lib/directory.js', function () {
         const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
         return expect(writtenData).to.satisfy((c) => data.equals(c))
       })
+    })
+
+    it('rejects if name is not a string or is empty', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return Promise.all([
+        expect(obj.write(null, Buffer.alloc(0))).to.eventually.be.rejected,
+        expect(obj.write('', Buffer.alloc(0))).to.eventually.be.rejected
+      ])
     })
 
     it('supports encodings for strings: no options', function () {
