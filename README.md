@@ -4,7 +4,17 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/82c10c63edb8ba33bfdb/test_coverage)](https://codeclimate.com/github/meyfa/fs-adapters/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/82c10c63edb8ba33bfdb/maintainability)](https://codeclimate.com/github/meyfa/fs-adapters/maintainability)
 
-Minimal JavaScript interfaces for file system abstraction
+This package provides minimal JavaScript interfaces for file system abstraction.
+It tries to include enough to be comfortable for users, without being a burden
+on implementers.
+
+The main use case is test instrumentation via dependency injection.
+Production code could use the directory adapter for persistent storage, while
+unit tests might use the memory adapter instead.
+
+Still, at its heart this is just an interface, and can be implemented to fit any
+number of backends. Creating custom adapter types might enable you to swap cloud
+with local storage on the fly, for example.
 
 
 ## Install
