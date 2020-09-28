@@ -252,6 +252,15 @@ describe('lib/memory.js', function () {
       })
       return expect(obj.read('foo', {})).to.eventually.satisfy(d => data.equals(d))
     })
+
+    it('treats string options as encoding', function () {
+      const data = Buffer.from('hello world', 'utf8')
+      const obj = new MemoryAdapter({
+        foo: data
+      })
+      return expect(obj.read('foo', 'utf8'))
+        .to.eventually.equal('hello world')
+    })
   })
 
   describe('#write()', function () {
@@ -310,6 +319,18 @@ describe('lib/memory.js', function () {
     it('supports encodings for strings: explicit encoding option', function (done) {
       const obj = new MemoryAdapter()
       expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
+        const read = obj.createReadStream('foo')
+        read.on('data', function (chunk) {
+          const expected = Buffer.from('hello world', 'utf16le')
+          expect(chunk).to.satisfy((c) => expected.equals(c))
+          done()
+        })
+      })
+    })
+
+    it('supports encodings for strings: string parameter', function (done) {
+      const obj = new MemoryAdapter()
+      expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled.then(() => {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')

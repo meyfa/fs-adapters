@@ -136,6 +136,11 @@ describe('lib/base.js', function () {
         return Buffer.from('hello world', 'utf8').equals(c)
       })
     })
+
+    it('treats string options as encoding', function () {
+      const obj = new MockReadAdapter()
+      return expect(obj.read('foo', 'utf8')).to.eventually.equal('hello world')
+    })
   })
 
   describe('#write()', function () {
@@ -183,6 +188,14 @@ describe('lib/base.js', function () {
     it('supports encodings for strings: explicit encoding option', function () {
       const obj = new MockWriteAdapter()
       return expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
+        const expected = Buffer.from('hello world', 'utf16le')
+        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+      })
+    })
+
+    it('supports encodings for strings: string parameter', function () {
+      const obj = new MockWriteAdapter()
+      return expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled.then(() => {
         const expected = Buffer.from('hello world', 'utf16le')
         return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
       })

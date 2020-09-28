@@ -81,11 +81,13 @@ Read the file whole, resolving to its contents as a Buffer. If an encoding is
 specified, this will convert the buffer to a string and resolve to that.
 
 - **`fileName`** `<string>` The name of the file to read.
-- **`options`** `<object>`
+- **`options`** `<object|string>`
   - **`encoding`** `<string|null>`: encoding to use for string conversion.
       Default: `null`
 - Returns: `<Promise<Buffer|string>>` A Promise that resolves to the file
     contents, or rejects on error.
+
+If options is a string, it is treated as the encoding.
 
 
 ## `async write(fileName, data[, options])`
@@ -94,10 +96,12 @@ Write to the given file name in one go.
 
 - **`fileName`** `<string>` The name of the file to read.
 - **`data`** `<Buffer|string>` The file contents to write.
-- **`options`** `<object>`
+- **`options`** `<object|string>`
   - **`encoding`** `<string>`: encoding to use if data is a string.
       Default: `'utf8'`
 - Returns: `<Promise>` A Promise that resolves when done, or rejects on error.
+
+If options is a string, it is treated as the encoding.
 
 
 ## Implementations
