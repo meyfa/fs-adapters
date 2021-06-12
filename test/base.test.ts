@@ -1,15 +1,17 @@
-'use strict'
+import stream from 'stream'
+import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-const chai = require('chai')
-chai.use(require('chai-as-promised'))
-const expect = chai.expect
+import Adapter from '../lib/base'
 
-const { ReadableStreamBuffer, WritableStreamBuffer } = require('stream-buffers')
-
-const Adapter = require('../lib/base.js')
+import chai, { expect } from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+chai.use(chaiAsPromised)
 
 class MockReadAdapter extends Adapter {
-  createReadStream (fileName) {
+  shouldThrow: boolean = false
+  shouldError: boolean = false
+
+  createReadStream (fileName: string): stream.Readable {
     if (fileName !== 'foo') {
       throw new Error('expected file name to be "foo"')
     }
@@ -31,14 +33,19 @@ class MockReadAdapter extends Adapter {
 }
 
 class MockWriteAdapter extends Adapter {
-  createWriteStream (fileName) {
+  shouldThrow: boolean = false
+  shouldError: boolean = false
+  writtenData: Buffer | undefined
+
+  createWriteStream (fileName: string): stream.Writable {
     if (this.shouldThrow) {
       throw new Error('expected error')
     }
 
     const stream = new WritableStreamBuffer()
     stream.on('finish', () => {
-      this.writtenData = stream.getContents()
+      const result: Buffer | false = stream.getContents()
+      this.writtenData = result === false ? Buffer.alloc(0) : result
     })
     if (this.shouldError) {
       stream._write = function (chunk, encoding, callback) {
@@ -49,7 +56,7 @@ class MockWriteAdapter extends Adapter {
   }
 }
 
-describe('lib/base.js', function () {
+describe('lib/base.ts', function () {
   describe('#init()', function () {
     it('resolves', function () {
       const obj = new Adapter()
@@ -107,7 +114,7 @@ describe('lib/base.js', function () {
 
     it('works if subclass implements createReadStream', function () {
       const obj = new MockReadAdapter()
-      return expect(obj.read('foo')).to.eventually.satisfy(c => {
+      return expect(obj.read('foo')).to.eventually.satisfy((c: Buffer) => {
         return Buffer.from('hello world', 'utf8').equals(c)
       })
     })
@@ -132,7 +139,7 @@ describe('lib/base.js', function () {
 
     it('ignores empty options', function () {
       const obj = new MockReadAdapter()
-      return expect(obj.read('foo', {})).to.eventually.satisfy(c => {
+      return expect(obj.read('foo', {})).to.eventually.satisfy((c: Buffer) => {
         return Buffer.from('hello world', 'utf8').equals(c)
       })
     })
@@ -153,7 +160,7 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       const data = Buffer.from('hello world', 'utf8')
       return expect(obj.write('foo', data)).to.eventually.be.fulfilled.then(() => {
-        return expect(obj.writtenData).to.satisfy(c => data.equals(c))
+        return expect(obj.writtenData).to.satisfy((c: Buffer) => data.equals(c))
       })
     })
 
@@ -173,7 +180,7 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       return expect(obj.write('foo', 'hello world')).to.eventually.be.fulfilled.then(() => {
         const expected = Buffer.from('hello world', 'utf8')
-        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+        return expect(obj.writtenData).to.satisfy((c: Buffer) => expected.equals(c))
       })
     })
 
@@ -181,7 +188,7 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       return expect(obj.write('foo', 'hello world', {})).to.eventually.be.fulfilled.then(() => {
         const expected = Buffer.from('hello world', 'utf8')
-        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+        return expect(obj.writtenData).to.satisfy((c: Buffer) => expected.equals(c))
       })
     })
 
@@ -189,7 +196,7 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       return expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
         const expected = Buffer.from('hello world', 'utf16le')
-        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+        return expect(obj.writtenData).to.satisfy((c: Buffer) => expected.equals(c))
       })
     })
 
@@ -197,7 +204,7 @@ describe('lib/base.js', function () {
       const obj = new MockWriteAdapter()
       return expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled.then(() => {
         const expected = Buffer.from('hello world', 'utf16le')
-        return expect(obj.writtenData).to.satisfy(c => expected.equals(c))
+        return expect(obj.writtenData).to.satisfy((c: Buffer) => expected.equals(c))
       })
     })
   })

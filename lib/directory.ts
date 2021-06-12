@@ -1,29 +1,30 @@
-'use strict'
+import stream from 'stream'
+import path from 'path'
+import fs from 'fs'
 
-const Adapter = require('./base')
+import Adapter, { ReadWriteOptions } from './base'
+import resolveEncoding from './util/resolve-encoding'
 
-const path = require('path')
-const fs = require('fs')
-const resolveEncoding = require('./util/resolve-encoding')
+export default class DirectoryAdapter extends Adapter {
+  readonly directory: string
 
-class DirectoryAdapter extends Adapter {
   /**
    * Construct a new DirectoryAdapter.
    *
    * @param {string} directory The path to the directory.
    */
-  constructor (directory) {
+  constructor (directory: string) {
     super()
     this.directory = directory
   }
 
-  _resolve (fileName) {
+  _resolve (fileName: string): string {
     if (path.isAbsolute(fileName)) {
       throw new Error('file name must be relative')
     }
     const abs = path.join(this.directory, fileName)
     const rel = path.relative(this.directory, abs)
-    if (!rel) {
+    if (rel === '') {
       // denotes the base directory
       throw new Error('trying to access base directory')
     }
@@ -34,7 +35,7 @@ class DirectoryAdapter extends Adapter {
     return abs
   }
 
-  async init () {
+  async init (): Promise<void> {
     try {
       await fs.promises.mkdir(this.directory)
       return // we can assume the directory was created
@@ -53,8 +54,8 @@ class DirectoryAdapter extends Adapter {
     }
   }
 
-  async listFiles () {
-    let files = []
+  async listFiles (): Promise<string[]> {
+    let files: string[] = []
     try {
       files = await fs.promises.readdir(this.directory)
     } catch (err) {
@@ -66,7 +67,7 @@ class DirectoryAdapter extends Adapter {
     return files
   }
 
-  async exists (fileName) {
+  async exists (fileName: string): Promise<boolean> {
     const file = this._resolve(fileName)
     try {
       await fs.promises.access(file)
@@ -76,43 +77,37 @@ class DirectoryAdapter extends Adapter {
     return true
   }
 
-  async rename (fileName, newFileName) {
+  async rename (fileName: string, newFileName: string): Promise<void> {
     const from = this._resolve(fileName)
     const to = this._resolve(newFileName)
 
     await fs.promises.rename(from, to)
   }
 
-  async delete (fileName) {
+  async delete (fileName: string): Promise<void> {
     const file = this._resolve(fileName)
     await fs.promises.unlink(file)
   }
 
-  createReadStream (fileName) {
+  createReadStream (fileName: string): stream.Readable {
     const file = this._resolve(fileName)
     return fs.createReadStream(file)
   }
 
-  createWriteStream (fileName) {
+  createWriteStream (fileName: string): stream.Writable {
     const file = this._resolve(fileName)
     return fs.createWriteStream(file)
   }
 
-  async read (fileName, options) {
+  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer|string> {
     const file = this._resolve(fileName)
     const encoding = resolveEncoding(options)
-    return fs.promises.readFile(file, {
-      encoding: encoding || null
-    })
+    return await fs.promises.readFile(file, { encoding })
   }
 
-  async write (fileName, data, options) {
+  async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
     const file = this._resolve(fileName)
     const encoding = resolveEncoding(options)
-    await fs.promises.writeFile(file, data, {
-      encoding: encoding || undefined
-    })
+    await fs.promises.writeFile(file, data, { encoding })
   }
 }
-
-module.exports = DirectoryAdapter
