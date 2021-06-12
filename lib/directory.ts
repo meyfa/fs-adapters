@@ -99,7 +99,7 @@ export default class DirectoryAdapter extends Adapter {
     return fs.createWriteStream(file)
   }
 
-  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer|string> {
+  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
     const file = this._resolve(fileName)
     const encoding = resolveEncoding(options)
     return await fs.promises.readFile(file, { encoding })

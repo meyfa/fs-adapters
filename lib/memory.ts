@@ -122,7 +122,7 @@ export default class MemoryAdapter extends Adapter {
     return stream
   }
 
-  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer|string> {
+  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
     const encoding = resolveEncoding(options)
     const buffer = this._safeGet(fileName)
     return encoding != null ? buffer.toString(encoding) : buffer

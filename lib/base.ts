@@ -2,7 +2,30 @@ import stream from 'stream'
 import { WritableStreamBuffer } from 'stream-buffers'
 import resolveEncoding from './util/resolve-encoding'
 
-export type ReadWriteOptions = BufferEncoding | { encoding?: BufferEncoding }
+export type ReadWriteOptions = BufferEncoding | { encoding: BufferEncoding } | { encoding?: null } | undefined | null
+
+type OptionalEncoding = BufferEncoding | undefined | null
+type BufferOrString<E extends OptionalEncoding> = E extends BufferEncoding ? string : Buffer
+
+function getContentsFrom<E extends OptionalEncoding> (wsb: WritableStreamBuffer, encoding: E): BufferOrString<E>
+
+/**
+ * Returns the contents of a writable buffer.
+ * If an encoding is specified, the contents are returned as a string, Buffer otherwise.
+ *
+ * @param {WritableStreamBuffer} wsb The writable buffer.
+ * @param {?string} encoding The optional encoding.
+ * @returns {Buffer|string} The contents as Buffer or decoded string.
+ */
+function getContentsFrom (wsb: WritableStreamBuffer, encoding: OptionalEncoding): Buffer | string {
+  if (encoding != null) {
+    const result: string | false = wsb.getContentsAsString(encoding)
+    return result === false ? '' : result
+  } else {
+    const result: Buffer | false = wsb.getContents()
+    return result === false ? Buffer.alloc(0) : result
+  }
+}
 
 export default class Adapter {
   /**
@@ -90,9 +113,9 @@ export default class Adapter {
    *
    * @param {string} fileName The name of the file to read.
    * @param {?(object|string)} options Additional options: encoding.
-   * @returns {Promise<Buffer>} Resolves to a Buffer, or rejects on error.
+   * @returns {Promise<Buffer|string>} Resolves to a Buffer or string, or rejects on error.
    */
-  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer|string> {
+  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
     // DEFAULT IMPLEMENTATION
     // subclasses should override if they can provide better performance
 
@@ -100,18 +123,10 @@ export default class Adapter {
 
     const stream = this.createReadStream(fileName)
     const writable = new WritableStreamBuffer()
-    const promise: Promise<Buffer|string> = new Promise((resolve, reject) => {
+    const promise: Promise<Buffer | string> = new Promise((resolve, reject) => {
       // errors are not forwarded with pipe, so listen on original stream
       stream.on('error', err => reject(err))
-      writable.on('finish', () => {
-        if (encoding != null) {
-          const result: string | false = writable.getContentsAsString(encoding)
-          resolve(result === false ? '' : result)
-        } else {
-          const result: Buffer | false = writable.getContents()
-          resolve(result === false ? Buffer.alloc(0) : result)
-        }
-      })
+      writable.on('finish', () => resolve(getContentsFrom(writable, encoding)))
     })
     stream.pipe(writable)
     return promise
