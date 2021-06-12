@@ -18,13 +18,15 @@ function getContentsFrom<E extends OptionalEncoding> (wsb: WritableStreamBuffer,
  * @returns {Buffer|string} The contents as Buffer or decoded string.
  */
 function getContentsFrom (wsb: WritableStreamBuffer, encoding: OptionalEncoding): Buffer | string {
+  let result
   if (encoding != null) {
-    const result: string | false = wsb.getContentsAsString(encoding)
-    return result === false ? '' : result
+    result = wsb.getContentsAsString(encoding)
+    if (result === false) return ''
   } else {
-    const result: Buffer | false = wsb.getContents()
-    return result === false ? Buffer.alloc(0) : result
+    result = wsb.getContents()
+    if (result === false) return Buffer.alloc(0)
   }
+  return result
 }
 
 export default class Adapter {
