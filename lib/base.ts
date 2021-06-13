@@ -84,7 +84,7 @@ export default class Adapter {
   }
 
   /**
-   * Create a read stream for the given file name.
+   * Create a read-stream for the given file name.
    *
    * This should be preferred over read() when the file is potentially large or
    * does not need to be in memory all at once.
@@ -98,7 +98,7 @@ export default class Adapter {
   }
 
   /**
-   * Create a write stream for the given file name.
+   * Create a write-stream for the given file name.
    *
    * @abstract
    * @param {string} fileName The name of the file to write.
