@@ -90,9 +90,10 @@ export default class MemoryAdapter extends Adapter {
   }
 
   async rename (fileName: string, newFileName: string): Promise<void> {
+    const source = this._safeGet(fileName)
     if (newFileName !== fileName) {
       this._ensureValid(newFileName)
-      this.entries.set(newFileName, this._safeGet(fileName))
+      this.entries.set(newFileName, source)
       this.entries.delete(fileName)
     }
   }

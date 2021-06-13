@@ -89,6 +89,13 @@ describe('lib/memory.ts', function () {
         .with.property('code', 'ENOENT')
     })
 
+    it('rejects for missing files even if renaming to same name', function () {
+      const obj = new MemoryAdapter()
+      return expect(obj.rename('foo', 'foo'))
+        .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
     it('renames files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
@@ -121,6 +128,13 @@ describe('lib/memory.ts', function () {
         return expect(obj.listFiles())
           .to.eventually.deep.equal(['foo'])
       })
+    })
+
+    it('rejects if source name not a string or is empty', async function () {
+      const obj = new MemoryAdapter()
+      // @ts-expect-error
+      await expect(obj.rename(null, 'bar')).to.eventually.be.rejected
+      await expect(obj.rename('', 'bar')).to.eventually.be.rejected
     })
 
     it('rejects if new name is not a string or is empty', async function () {

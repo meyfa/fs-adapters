@@ -131,6 +131,13 @@ describe('lib/directory.ts', function () {
         .with.property('code', 'ENOENT')
     })
 
+    it('rejects for missing files even if renaming to same name', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      return expect(obj.rename('doesnotexist.txt', 'doesnotexist.txt'))
+        .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
     it('rejects for non-existent base directory, with code=ENOENT', function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
       return expect(obj.rename('test.txt', 'bar.txt'))
@@ -145,6 +152,13 @@ describe('lib/directory.ts', function () {
           return expect(fs.promises.readdir(RESOURCES_DIR))
             .to.eventually.have.members(['renamed.txt'])
         })
+    })
+
+    it('rejects if source name not a string or is empty', async function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      // @ts-expect-error
+      await expect(obj.rename(null, 'bar')).to.eventually.be.rejected
+      await expect(obj.rename('', 'bar')).to.eventually.be.rejected
     })
 
     it('rejects if new name is not a string or is empty', async function () {
