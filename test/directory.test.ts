@@ -28,31 +28,37 @@ describe('lib/directory.ts', function () {
   })
 
   describe('#_resolve()', function () {
+    // helper function to avoid repeating ts-expect-error
+    function callResolve (obj: DirectoryAdapter, ...args: any[]): any {
+      // @ts-expect-error
+      return obj._resolve(...args)
+    }
+
     it('throws when resolving to base directory itself', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => obj._resolve('')).to.throw()
-      expect(() => obj._resolve('.')).to.throw()
-      expect(() => obj._resolve('./')).to.throw()
-      expect(() => obj._resolve('foo/..')).to.throw()
-      expect(() => obj._resolve('foo/../')).to.throw()
-      expect(() => obj._resolve(RESOURCES_DIR)).to.throw()
+      expect(() => callResolve(obj, '')).to.throw()
+      expect(() => callResolve(obj, '.')).to.throw()
+      expect(() => callResolve(obj, './')).to.throw()
+      expect(() => callResolve(obj, 'foo/..')).to.throw()
+      expect(() => callResolve(obj, 'foo/../')).to.throw()
+      expect(() => callResolve(obj, RESOURCES_DIR)).to.throw()
     })
 
     it('throws when resolving to parent directories', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => obj._resolve('..')).to.throw()
-      expect(() => obj._resolve('../../')).to.throw()
+      expect(() => callResolve(obj, '..')).to.throw()
+      expect(() => callResolve(obj, '../../')).to.throw()
     })
 
     it('throws when resolving files outside base directory', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => obj._resolve('../directory.test.ts')).to.throw()
-      expect(() => obj._resolve('foo/../../directory.test.ts')).to.throw()
+      expect(() => callResolve(obj, '../directory.test.ts')).to.throw()
+      expect(() => callResolve(obj, 'foo/../../directory.test.ts')).to.throw()
     })
 
     it('throws when resolving absolute paths', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => obj._resolve(RESOURCES_DIR + '/foo.bin')).to.throw()
+      expect(() => callResolve(obj, RESOURCES_DIR + '/foo.bin')).to.throw()
     })
   })
 

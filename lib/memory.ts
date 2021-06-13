@@ -58,21 +58,21 @@ export default class MemoryAdapter extends Adapter {
     putAll(this.entries, initialFiles)
   }
 
-  _ensureValid (fileName: any): void {
+  private static _ensureValid (fileName: any): void {
     // throw an error if the file name is not a somewhat reasonable string
     if (typeof fileName !== 'string' || fileName.length <= 0) {
       throw new Error('expected fileName to be a non-empty string')
     }
   }
 
-  _ensureExists (fileName: string): void {
+  private _ensureExists (fileName: string): void {
     // throw ENOENT when file not found
     if (!this.entries.has(fileName)) {
       throw new ErrorWithCode('ENOENT')
     }
   }
 
-  _safeGet (fileName: string): Buffer {
+  private _safeGet (fileName: string): Buffer {
     const value: Buffer | undefined = this.entries.get(fileName)
     if (value == null) {
       throw new ErrorWithCode('ENOENT')
@@ -85,14 +85,14 @@ export default class MemoryAdapter extends Adapter {
   }
 
   async exists (fileName: string): Promise<boolean> {
-    this._ensureValid(fileName)
+    MemoryAdapter._ensureValid(fileName)
     return this.entries.has(fileName)
   }
 
   async rename (fileName: string, newFileName: string): Promise<void> {
     const source = this._safeGet(fileName)
     if (newFileName !== fileName) {
-      this._ensureValid(newFileName)
+      MemoryAdapter._ensureValid(newFileName)
       this.entries.set(newFileName, source)
       this.entries.delete(fileName)
     }
@@ -114,7 +114,7 @@ export default class MemoryAdapter extends Adapter {
   }
 
   createWriteStream (fileName: string): stream.Writable {
-    this._ensureValid(fileName)
+    MemoryAdapter._ensureValid(fileName)
     const stream = new WritableStreamBuffer()
     stream.on('finish', () => {
       const data: Buffer | false = stream.getContents()
@@ -130,7 +130,7 @@ export default class MemoryAdapter extends Adapter {
   }
 
   async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
-    this._ensureValid(fileName)
+    MemoryAdapter._ensureValid(fileName)
     const encoding = resolveEncoding(options)
     const buffer = typeof data === 'string'
       ? Buffer.from(data, encoding ?? 'utf8')

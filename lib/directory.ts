@@ -18,7 +18,7 @@ export default class DirectoryAdapter extends Adapter {
     this.directory = directory
   }
 
-  _resolve (fileName: string): string {
+  private _resolve (fileName: string): string {
     if (path.isAbsolute(fileName)) {
       throw new Error('file name must be relative')
     }
