@@ -13,7 +13,8 @@
     "test": "npm run clean && ts-mocha --recursive \"test/**/*.test.*\"",
     "lint": "eslint --ignore-path .gitignore .",
     "lint-fix": "eslint --fix --ignore-path .gitignore .",
-    "coverage": "nyc --reporter=lcov npm test"
+    "coverage": "nyc --reporter=lcov npm test",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
