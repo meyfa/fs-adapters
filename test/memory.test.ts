@@ -1,13 +1,11 @@
-'use strict'
+import Adapter from '../lib/base'
+import MemoryAdapter from '../lib/memory'
 
-const chai = require('chai')
-chai.use(require('chai-as-promised'))
-const expect = chai.expect
+import chai, { expect } from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+chai.use(chaiAsPromised)
 
-const Adapter = require('../lib/base.js')
-const MemoryAdapter = require('../lib/memory.js')
-
-describe('lib/memory.js', function () {
+describe('lib/memory.ts', function () {
   it('extends Adapter', function () {
     expect(MemoryAdapter.prototype).to.be.instanceOf(Adapter)
   })
@@ -60,7 +58,7 @@ describe('lib/memory.js', function () {
         foo: 'hello world'
       })
       const data = Buffer.from('hello world', 'utf8')
-      return expect(obj.read('foo')).to.eventually.satisfy(d => data.equals(d))
+      return expect(obj.read('foo')).to.eventually.satisfy((d: Buffer) => data.equals(d))
     })
   })
 
@@ -72,6 +70,7 @@ describe('lib/memory.js', function () {
 
     it('rejects when given nothing', function () {
       const obj = new MemoryAdapter()
+      // @ts-expect-error
       return expect(obj.exists()).to.eventually.be.rejected
     })
 
@@ -90,11 +89,18 @@ describe('lib/memory.js', function () {
         .with.property('code', 'ENOENT')
     })
 
-    it('renames files', function () {
+    it('rejects for missing files even if renaming to same name', function () {
+      const obj = new MemoryAdapter()
+      return expect(obj.rename('foo', 'foo'))
+        .to.eventually.be.rejected
+        .with.property('code', 'ENOENT')
+    })
+
+    it('renames files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return obj.rename('foo', 'bar').then(() => {
+      return await obj.rename('foo', 'bar').then(() => {
         return expect(obj.listFiles())
           .to.eventually.include('bar').but.not.include('foo')
       })
@@ -108,27 +114,35 @@ describe('lib/memory.js', function () {
       obj.rename('foo', 'bar').then(() => {
         const read = obj.createReadStream('bar')
         read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c) => data.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
           done()
         })
       })
     })
 
-    it('does nothing if name stays the same', function () {
+    it('does nothing if name stays the same', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return obj.rename('foo', 'foo').then(() => {
+      return await obj.rename('foo', 'foo').then(() => {
         return expect(obj.listFiles())
           .to.eventually.deep.equal(['foo'])
       })
     })
 
-    it('rejects if new name is not a string or is empty', function () {
+    it('rejects if source name not a string or is empty', async function () {
+      const obj = new MemoryAdapter()
+      // @ts-expect-error
+      await expect(obj.rename(null, 'bar')).to.eventually.be.rejected
+      await expect(obj.rename('', 'bar')).to.eventually.be.rejected
+    })
+
+    it('rejects if new name is not a string or is empty', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return Promise.all([
+      return await Promise.all([
+        // @ts-expect-error
         expect(obj.rename('foo', null)).to.eventually.be.rejected,
         expect(obj.rename('foo', '')).to.eventually.be.rejected
       ])
@@ -142,11 +156,11 @@ describe('lib/memory.js', function () {
         .with.property('code', 'ENOENT')
     })
 
-    it('deletes files', function () {
+    it('deletes files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return obj.delete('foo').then(() => {
+      return await obj.delete('foo').then(() => {
         return expect(obj.listFiles()).to.eventually.not.include('foo')
       })
     })
@@ -175,7 +189,7 @@ describe('lib/memory.js', function () {
       })
       const stream = obj.createReadStream('foo')
       stream.on('data', function (chunk) {
-        expect(chunk).to.satisfy((c) => data.equals(c))
+        expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
         done()
       })
     })
@@ -196,7 +210,7 @@ describe('lib/memory.js', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c) => expected.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
           done()
         })
       })
@@ -206,16 +220,17 @@ describe('lib/memory.js', function () {
     it('adds to the list of files', function (done) {
       const obj = new MemoryAdapter()
       const stream = obj.createWriteStream('foo')
-      stream.on('finish', function () {
-        expect(obj.listFiles()).to.eventually.be.an('array')
+      stream.on('finish', async function () {
+        await expect(obj.listFiles()).to.eventually.be.an('array')
           .with.members(['foo'])
           .notify(done)
-      })
+      } as () => void)
       stream.end()
     })
 
     it('throws if name is not a string or is empty', function () {
       const obj = new MemoryAdapter()
+      // @ts-expect-error
       expect(() => obj.createWriteStream(null)).to.throw()
       expect(() => obj.createWriteStream('')).to.throw()
     })
@@ -233,7 +248,7 @@ describe('lib/memory.js', function () {
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo')).to.eventually.satisfy(d => data.equals(d))
+      return expect(obj.read('foo')).to.eventually.satisfy((d: Buffer) => data.equals(d))
     })
 
     it('converts to string if passed an encoding', function () {
@@ -250,7 +265,7 @@ describe('lib/memory.js', function () {
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo', {})).to.eventually.satisfy(d => data.equals(d))
+      return expect(obj.read('foo', {})).to.eventually.satisfy((d: Buffer) => data.equals(d))
     })
 
     it('treats string options as encoding', function () {
@@ -270,23 +285,24 @@ describe('lib/memory.js', function () {
       expect(obj.write('foo', data)).to.eventually.be.fulfilled.then(() => {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c) => data.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
           done()
         })
       })
     })
 
-    it('adds to the list of files', function () {
+    it('adds to the list of files', async function () {
       const obj = new MemoryAdapter()
-      return obj.write('foo', Buffer.alloc(0)).then(() => {
+      return await obj.write('foo', Buffer.alloc(0)).then(() => {
         return expect(obj.listFiles()).to.eventually.be.an('array')
           .with.members(['foo'])
       })
     })
 
-    it('rejects if name is not a string or is empty', function () {
+    it('rejects if name is not a string or is empty', async function () {
       const obj = new MemoryAdapter()
-      return Promise.all([
+      return await Promise.all([
+        // @ts-expect-error
         expect(obj.write(null, Buffer.alloc(0))).to.eventually.be.rejected,
         expect(obj.write('', Buffer.alloc(0))).to.eventually.be.rejected
       ])
@@ -298,7 +314,7 @@ describe('lib/memory.js', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c) => expected.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
           done()
         })
       })
@@ -310,7 +326,7 @@ describe('lib/memory.js', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c) => expected.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
           done()
         })
       })
@@ -322,7 +338,7 @@ describe('lib/memory.js', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
-          expect(chunk).to.satisfy((c) => expected.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
           done()
         })
       })
@@ -334,7 +350,7 @@ describe('lib/memory.js', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
-          expect(chunk).to.satisfy((c) => expected.equals(c))
+          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
           done()
         })
       })

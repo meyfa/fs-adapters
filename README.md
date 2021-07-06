@@ -4,7 +4,8 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/82c10c63edb8ba33bfdb/test_coverage)](https://codeclimate.com/github/meyfa/fs-adapters/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/82c10c63edb8ba33bfdb/maintainability)](https://codeclimate.com/github/meyfa/fs-adapters/maintainability)
 
-This package provides minimal JavaScript interfaces for file system abstraction.
+This package provides minimal JavaScript / TypeScript interfaces for file
+system abstraction.
 It tries to include enough to be comfortable for users, without being a burden
 on implementers.
 
@@ -69,7 +70,7 @@ Delete a file.
 
 ### `createReadStream(fileName)`
 
-Create a read stream for the given file name. This should be preferred over
+Create a read-stream for the given file name. This should be preferred over
 `read()` when the file is potentially large or does not need to be in memory all
 at once.
 
@@ -79,13 +80,13 @@ at once.
 
 ### `createWriteStream(fileName)`
 
-Create a write stream for the given file name.
+Create a write-stream for the given file name.
 
 - **`fileName`** `<string>` The name of the file to write.
 - Returns: `<stream.Readable>` A writable stream for the file.
 
 
-## `async read(fileName[, options])`
+### `async read(fileName[, options])`
 
 Read the file whole, resolving to its contents as a Buffer. If an encoding is
 specified, this will convert the buffer to a string and resolve to that.
@@ -100,7 +101,7 @@ specified, this will convert the buffer to a string and resolve to that.
 If options is a string, it is treated as the encoding.
 
 
-## `async write(fileName, data[, options])`
+### `async write(fileName, data[, options])`
 
 Write to the given file name in one go.
 
@@ -124,7 +125,7 @@ and highly suitable for test scenarios, for example.
 
 #### Constructors
 
-```javascript
+```js
 new MemoryAdapter()
 new MemoryAdapter(initialFiles)
 ```
@@ -134,7 +135,7 @@ new MemoryAdapter(initialFiles)
 
 #### Usage Example
 
-```javascript
+```js
 const { MemoryAdapter } = require('fs-adapters')
 
 const adapter = new MemoryAdapter({
@@ -170,7 +171,7 @@ results in an error.
 
 #### Constructors
 
-```javascript
+```js
 new DirectoryAdapter(directory)
 ```
 
@@ -178,7 +179,7 @@ new DirectoryAdapter(directory)
 
 #### Usage Example
 
-```javascript
+```js
 const { DirectoryAdapter } = require('fs-adapters')
 const path = require('path')
 
@@ -193,17 +194,21 @@ adapter.init().then(() => {
 
 ## Extending
 
-This is a loose specification, and JavaScript is a weakly typed language. As
-such, creating a new adapter is as simple as writing a class with the specified
-methods.
+This is a loose specification. As such, creating a new adapter is as simple as
+writing a class with the specified methods. If you only need your adapter to
+work with plain JavaScript (not TypeScript) and want to skip practical hints
+from your IDE, this will be enough.
 
 Yet, to facilitate implementation and ensure perfect interoperability between
-adapters, it is recommended that implementers extend the common superclass
-`Adapter`. All implementations supplied with this package (MemoryAdapter,
-DirectoryAdapter) do this. Example:
+adapters, you should extend the common superclass `Adapter`. This has benefits
+even in plain JavaScript but is basically mandatory in TypeScript.
+All implementations supplied with this package (MemoryAdapter,
+DirectoryAdapter) do this.
 
-```js
-const FSAdapter = require('fs-adapters').Adapter
+Example:
+
+```ts
+import { Adapter } from 'fs-adapters'
 
 class CustomAdapter extends FSAdapter {
   // implement methods here
@@ -213,8 +218,8 @@ class CustomAdapter extends FSAdapter {
 The `Adapter` class provides default implementations for the following methods:
 
 - `init()`: does nothing by default
-- `read(...)`: creates a read stream and wraps it into a promise
-- `write(...)`: creates a write stream and wraps it into a promise
+- `read(...)`: creates a read-stream and wraps it into a promise
+- `write(...)`: creates a write-stream and wraps it into a promise
 
 It is recommended that implementers override these default implementations when
 they can provide something more efficient.

@@ -1,16 +1,14 @@
-'use strict'
+import Adapter from '../lib/base'
+import MemoryAdapter from '../lib/memory'
+import DirectoryAdapter from '../lib/directory'
 
-const chai = require('chai')
-chai.use(require('chai-as-promised'))
-const expect = chai.expect
+import index from '../index'
 
-const Adapter = require('../lib/base.js')
-const MemoryAdapter = require('../lib/memory.js')
-const DirectoryAdapter = require('../lib/directory.js')
+import chai, { expect } from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+chai.use(chaiAsPromised)
 
-const index = require('../index.js')
-
-describe('index.js', function () {
+describe('index.ts', function () {
   describe('#Adapter', function () {
     it('exists', function () {
       expect(index.Adapter).to.exist
