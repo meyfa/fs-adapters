@@ -1,6 +1,6 @@
-import Adapter from '../lib/base'
-import MemoryAdapter from '../lib/memory'
-import DirectoryAdapter from '../lib/directory'
+import { Adapter } from '../lib/base'
+import { MemoryAdapter } from '../lib/memory'
+import { DirectoryAdapter } from '../lib/directory'
 
 import index from '../index'
 

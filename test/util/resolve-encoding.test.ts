@@ -1,4 +1,4 @@
-import resolveEncoding from '../../lib/util/resolve-encoding'
+import { resolveEncoding } from '../../lib/util/resolve-encoding'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

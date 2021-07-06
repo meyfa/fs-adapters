@@ -1,5 +1,5 @@
-import Adapter from '../lib/base'
-import MemoryAdapter from '../lib/memory'
+import { Adapter } from '../lib/base'
+import { MemoryAdapter } from '../lib/memory'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

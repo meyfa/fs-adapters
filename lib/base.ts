@@ -1,6 +1,6 @@
 import stream from 'stream'
 import { WritableStreamBuffer } from 'stream-buffers'
-import resolveEncoding from './util/resolve-encoding'
+import { resolveEncoding } from './util/resolve-encoding'
 
 export type ReadWriteOptions = BufferEncoding | { encoding: BufferEncoding } | { encoding?: null } | undefined | null
 
@@ -29,7 +29,7 @@ function getContentsFrom (wsb: WritableStreamBuffer, encoding: OptionalEncoding)
   return result
 }
 
-export default class Adapter {
+export class Adapter {
   /**
    * Initialize this adapter.
    *
