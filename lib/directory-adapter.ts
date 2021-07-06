@@ -2,7 +2,7 @@ import stream from 'stream'
 import path from 'path'
 import fs from 'fs'
 
-import { Adapter, ReadWriteOptions } from './base'
+import { Adapter, ReadWriteOptions } from './adapter'
 import { resolveEncoding } from './util/resolve-encoding'
 
 export class DirectoryAdapter extends Adapter {

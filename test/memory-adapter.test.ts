@@ -1,11 +1,11 @@
-import { Adapter } from '../lib/base'
-import { MemoryAdapter } from '../lib/memory'
+import { Adapter } from '../lib/adapter'
+import { MemoryAdapter } from '../lib/memory-adapter'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 
-describe('lib/memory.ts', function () {
+describe('lib/memory-adapter.ts', function () {
   it('extends Adapter', function () {
     expect(MemoryAdapter.prototype).to.be.instanceOf(Adapter)
   })

@@ -1,7 +1,7 @@
 import stream from 'stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import { Adapter, ReadWriteOptions } from './base'
+import { Adapter, ReadWriteOptions } from './adapter'
 import { resolveEncoding } from './util/resolve-encoding'
 
 type FileContents = Buffer | string
