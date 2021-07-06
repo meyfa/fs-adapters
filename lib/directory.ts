@@ -22,6 +22,9 @@ export default class DirectoryAdapter extends Adapter {
     if (path.isAbsolute(fileName)) {
       throw new Error('file name must be relative')
     }
+    if (fileName.includes('/') || fileName.includes('\\')) {
+      throw new Error('this adapter does not support file names containing slashes')
+    }
     const abs = path.join(this.directory, fileName)
     const rel = path.relative(this.directory, abs)
     if (rel === '') {

@@ -60,6 +60,11 @@ describe('lib/directory.ts', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       expect(() => callResolve(obj, RESOURCES_DIR + '/foo.bin')).to.throw()
     })
+
+    it('throws for paths containing a slash', function () {
+      const obj = new DirectoryAdapter(RESOURCES_DIR)
+      expect(() => callResolve(obj, 'foo/bar/qux.bin')).to.throw()
+    })
   })
 
   describe('#init()', function () {
