@@ -169,6 +169,9 @@ are interpreted as relative to the base directory, and navigating outside that
 directory (e.g. via `..`) or accessing the directory itself (e.g. via `.`)
 results in an error.
 
+Note that creating or accessing sub-directories is not (yet) supported.
+This might be added in the future, please feel free to make a Pull Request!
+
 #### Constructors
 
 ```js
