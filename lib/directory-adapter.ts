@@ -2,10 +2,10 @@ import stream from 'stream'
 import path from 'path'
 import fs from 'fs'
 
-import Adapter, { ReadWriteOptions } from './base'
-import resolveEncoding from './util/resolve-encoding'
+import { Adapter, ReadWriteOptions } from './adapter'
+import { resolveEncoding } from './util/resolve-encoding'
 
-export default class DirectoryAdapter extends Adapter {
+export class DirectoryAdapter extends Adapter {
   readonly directory: string
 
   /**

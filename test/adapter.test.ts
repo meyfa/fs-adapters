@@ -1,7 +1,7 @@
 import stream from 'stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import Adapter from '../lib/base'
+import { Adapter } from '../lib/adapter'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -56,7 +56,7 @@ class MockWriteAdapter extends Adapter {
   }
 }
 
-describe('lib/base.ts', function () {
+describe('lib/adapter.ts', function () {
   describe('#init()', function () {
     it('resolves', function () {
       const obj = new Adapter()

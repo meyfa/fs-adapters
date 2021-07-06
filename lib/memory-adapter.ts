@@ -1,8 +1,8 @@
 import stream from 'stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import Adapter, { ReadWriteOptions } from './base'
-import resolveEncoding from './util/resolve-encoding'
+import { Adapter, ReadWriteOptions } from './adapter'
+import { resolveEncoding } from './util/resolve-encoding'
 
 type FileContents = Buffer | string
 type FileContentsMapping = Record<string, FileContents> | Map<string, FileContents> | Array<[string, FileContents]>
@@ -40,7 +40,7 @@ function putAll (map: Map<string, Buffer>, items?: FileContentsMapping): void {
   }
 }
 
-export default class MemoryAdapter extends Adapter {
+export class MemoryAdapter extends Adapter {
   private readonly entries: Map<string, Buffer>
 
   /**
