@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
-    "test": "npm run clean && ts-mocha --recursive test/**/*.test.*",
+    "test": "npm run clean && ts-mocha --recursive \"test/**/*.test.*\"",
     "lint": "eslint --ignore-path .gitignore .",
     "lint-fix": "eslint --fix --ignore-path .gitignore .",
     "coverage": "nyc --reporter=lcov npm test"
