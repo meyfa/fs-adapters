@@ -227,12 +227,13 @@ describe('lib/directory-adapter.ts', function () {
       })
     })
 
-    it('obtains readable streams for existing files', function () {
+    it('obtains readable streams for existing files', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('test.txt')
       expect(stream)
         .to.be.an('object')
         .with.property('read').that.is.a('function')
+      stream.on('close', done)
       stream.destroy()
     })
 
@@ -242,19 +243,20 @@ describe('lib/directory-adapter.ts', function () {
       const stream = obj.createReadStream('test.txt')
       stream.on('data', function (chunk) {
         expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+        stream.on('close', done)
         stream.destroy()
-        done()
       })
     })
   })
 
   describe('#createWriteStream()', function () {
-    it('returns writable streams', function () {
+    it('returns writable streams', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createWriteStream('foo.bin')
       expect(stream)
         .to.be.an('object')
         .with.property('write').that.is.a('function')
+      stream.on('close', done)
       stream.destroy()
     })
 
@@ -265,7 +267,7 @@ describe('lib/directory-adapter.ts', function () {
       stream.on('finish', function () {
         const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
         expect(writtenData).to.satisfy((c: Buffer) => data.equals(c))
-        done()
+        stream.on('close', done)
       })
       stream.end(data)
     })

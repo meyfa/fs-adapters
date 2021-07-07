@@ -1,9 +1,3 @@
-import { Adapter } from './lib/adapter'
-import { MemoryAdapter } from './lib/memory-adapter'
-import { DirectoryAdapter } from './lib/directory-adapter'
-
-export = {
-  Adapter,
-  MemoryAdapter,
-  DirectoryAdapter
-}
+export { Adapter } from './lib/adapter'
+export { MemoryAdapter } from './lib/memory-adapter'
+export { DirectoryAdapter } from './lib/directory-adapter'
