@@ -1,6 +1,6 @@
 {
   "name": "fs-adapters",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Minimal interfaces for file system abstraction",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
