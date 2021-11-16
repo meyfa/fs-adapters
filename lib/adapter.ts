@@ -131,7 +131,7 @@ export class Adapter {
       writable.on('finish', () => resolve(getContentsFrom(writable, encoding)))
     })
     stream.pipe(writable)
-    return promise
+    return await promise
   }
 
   /**
