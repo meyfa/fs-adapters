@@ -4,6 +4,7 @@ import fs from 'fs'
 
 import { Adapter, ReadWriteOptions } from './adapter'
 import { resolveEncoding } from './util/resolve-encoding'
+import { getErrorCode } from './util/get-error-code'
 
 export class DirectoryAdapter extends Adapter {
   readonly directory: string
@@ -44,7 +45,7 @@ export class DirectoryAdapter extends Adapter {
       return // we can assume the directory was created
     } catch (err) {
       // ignore existing path ...
-      if (err.code !== 'EEXIST') {
+      if (getErrorCode(err) !== 'EEXIST') {
         throw err
       }
       // ... unless it is not a directory
@@ -63,7 +64,7 @@ export class DirectoryAdapter extends Adapter {
       files = await fs.promises.readdir(this.directory)
     } catch (err) {
       // ignore missing directory
-      if (err.code !== 'ENOENT') {
+      if (getErrorCode(err) !== 'ENOENT') {
         throw err
       }
     }
