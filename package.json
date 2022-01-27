@@ -43,7 +43,7 @@
     "@types/node": "16.11.21",
     "@types/rimraf": "3.0.2",
     "@types/stream-buffers": "3.0.4",
-    "@typescript-eslint/eslint-plugin": "4.33.0",
+    "@typescript-eslint/eslint-plugin": "5.10.1",
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "eslint": "7.32.0",
