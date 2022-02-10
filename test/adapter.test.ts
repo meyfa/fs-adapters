@@ -11,7 +11,7 @@ class MockReadAdapter extends Adapter {
   shouldThrow: boolean = false
   shouldError: boolean = false
 
-  createReadStream (fileName: string): stream.Readable {
+  override createReadStream (fileName: string): stream.Readable {
     if (fileName !== 'foo') {
       throw new Error('expected file name to be "foo"')
     }
@@ -37,7 +37,7 @@ class MockWriteAdapter extends Adapter {
   shouldError: boolean = false
   writtenData: Buffer | undefined
 
-  createWriteStream (fileName: string): stream.Writable {
+  override createWriteStream (fileName: string): stream.Writable {
     if (this.shouldThrow) {
       throw new Error('expected error')
     }

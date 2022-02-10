@@ -80,16 +80,16 @@ export class MemoryAdapter extends Adapter {
     return value
   }
 
-  async listFiles (): Promise<string[]> {
+  override async listFiles (): Promise<string[]> {
     return Array.from(this.entries.keys())
   }
 
-  async exists (fileName: string): Promise<boolean> {
+  override async exists (fileName: string): Promise<boolean> {
     MemoryAdapter._ensureValid(fileName)
     return this.entries.has(fileName)
   }
 
-  async rename (fileName: string, newFileName: string): Promise<void> {
+  override async rename (fileName: string, newFileName: string): Promise<void> {
     const source = this._safeGet(fileName)
     if (newFileName !== fileName) {
       MemoryAdapter._ensureValid(newFileName)
@@ -98,12 +98,12 @@ export class MemoryAdapter extends Adapter {
     }
   }
 
-  async delete (fileName: string): Promise<void> {
+  override async delete (fileName: string): Promise<void> {
     this._ensureExists(fileName)
     this.entries.delete(fileName)
   }
 
-  createReadStream (fileName: string): stream.Readable {
+  override createReadStream (fileName: string): stream.Readable {
     const data = this._safeGet(fileName)
 
     const stream = new ReadableStreamBuffer()
@@ -113,7 +113,7 @@ export class MemoryAdapter extends Adapter {
     return stream
   }
 
-  createWriteStream (fileName: string): stream.Writable {
+  override createWriteStream (fileName: string): stream.Writable {
     MemoryAdapter._ensureValid(fileName)
     const stream = new WritableStreamBuffer()
     stream.on('finish', () => {
@@ -123,13 +123,13 @@ export class MemoryAdapter extends Adapter {
     return stream
   }
 
-  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
+  override async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
     const encoding = resolveEncoding(options)
     const buffer = this._safeGet(fileName)
     return encoding != null ? buffer.toString(encoding) : buffer
   }
 
-  async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
+  override async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
     MemoryAdapter._ensureValid(fileName)
     const encoding = resolveEncoding(options)
     const buffer = typeof data === 'string'
