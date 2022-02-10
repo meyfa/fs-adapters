@@ -39,7 +39,7 @@ export class DirectoryAdapter extends Adapter {
     return abs
   }
 
-  async init (): Promise<void> {
+  override async init (): Promise<void> {
     try {
       await fs.promises.mkdir(this.directory)
       return // we can assume the directory was created
@@ -58,7 +58,7 @@ export class DirectoryAdapter extends Adapter {
     }
   }
 
-  async listFiles (): Promise<string[]> {
+  override async listFiles (): Promise<string[]> {
     let files: string[] = []
     try {
       files = await fs.promises.readdir(this.directory)
@@ -71,7 +71,7 @@ export class DirectoryAdapter extends Adapter {
     return files
   }
 
-  async exists (fileName: string): Promise<boolean> {
+  override async exists (fileName: string): Promise<boolean> {
     const file = this._resolve(fileName)
     try {
       await fs.promises.access(file)
@@ -81,35 +81,35 @@ export class DirectoryAdapter extends Adapter {
     return true
   }
 
-  async rename (fileName: string, newFileName: string): Promise<void> {
+  override async rename (fileName: string, newFileName: string): Promise<void> {
     const from = this._resolve(fileName)
     const to = this._resolve(newFileName)
 
     await fs.promises.rename(from, to)
   }
 
-  async delete (fileName: string): Promise<void> {
+  override async delete (fileName: string): Promise<void> {
     const file = this._resolve(fileName)
     await fs.promises.unlink(file)
   }
 
-  createReadStream (fileName: string): stream.Readable {
+  override createReadStream (fileName: string): stream.Readable {
     const file = this._resolve(fileName)
     return fs.createReadStream(file)
   }
 
-  createWriteStream (fileName: string): stream.Writable {
+  override createWriteStream (fileName: string): stream.Writable {
     const file = this._resolve(fileName)
     return fs.createWriteStream(file)
   }
 
-  async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
+  override async read (fileName: string, options?: ReadWriteOptions): Promise<Buffer | string> {
     const file = this._resolve(fileName)
     const encoding = resolveEncoding(options)
     return await fs.promises.readFile(file, { encoding })
   }
 
-  async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
+  override async write (fileName: string, data: Buffer | string, options?: ReadWriteOptions): Promise<void> {
     const file = this._resolve(fileName)
     const encoding = resolveEncoding(options)
     await fs.promises.writeFile(file, data, { encoding })
