@@ -1,8 +1,8 @@
-import { Adapter } from '../lib/adapter'
-import { MemoryAdapter } from '../lib/memory-adapter'
-import { DirectoryAdapter } from '../lib/directory-adapter'
+import { Adapter } from '../src/adapter'
+import { MemoryAdapter } from '../src/memory-adapter'
+import { DirectoryAdapter } from '../src/directory-adapter'
 
-import * as index from '../index'
+import * as index from '../src/index'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

@@ -2,8 +2,8 @@ import path from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
 
-import { Adapter } from '../lib/adapter'
-import { DirectoryAdapter } from '../lib/directory-adapter'
+import { Adapter } from '../src/adapter'
+import { DirectoryAdapter } from '../src/directory-adapter'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -12,7 +12,7 @@ chai.use(chaiAsPromised)
 const RESOURCES_DIR: string = path.join(__dirname, 'res')
 const NON_EXISTENT_DIR: string = path.join(__dirname, 'res', 'noex')
 
-describe('lib/directory-adapter.ts', function () {
+describe('directory-adapter.ts', function () {
   beforeEach(function () {
     rimraf.sync(RESOURCES_DIR)
     fs.mkdirSync(RESOURCES_DIR)
@@ -29,10 +29,8 @@ describe('lib/directory-adapter.ts', function () {
 
   describe('#_resolve()', function () {
     // helper function to avoid repeating ts-expect-error
-    function callResolve (obj: DirectoryAdapter, ...args: any[]): any {
-      // @ts-expect-error
-      return obj._resolve(...args)
-    }
+    // @ts-expect-error
+    const callResolve = (obj: DirectoryAdapter, ...args: any[]): any => obj._resolve(...args)
 
     it('throws when resolving to base directory itself', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)

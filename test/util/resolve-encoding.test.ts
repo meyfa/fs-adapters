@@ -1,10 +1,10 @@
-import { resolveEncoding } from '../../lib/util/resolve-encoding'
+import { resolveEncoding } from '../../src/util/resolve-encoding'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 
-describe('lib/util/resolve-encoding.ts', function () {
+describe('util/resolve-encoding.ts', function () {
   it('returns strings directly', function () {
     expect(resolveEncoding('utf8')).to.equal('utf8')
     expect(resolveEncoding('ascii')).to.equal('ascii')
