@@ -14,8 +14,8 @@ export function resolveEncoding (options: Record<any, any> | BufferEncoding | un
  * Obtain the encoding from an options parameter, which can be either a string
  * or an object with the 'encoding' property.
  *
- * @param {object} options The options parameter.
- * @returns {?string} The encoding, or undefined.
+ * @param options The options parameter.
+ * @returns The encoding, or undefined.
  */
 export function resolveEncoding (options: Record<any, any> | BufferEncoding | undefined | null): BufferEncoding | undefined {
   if (typeof options === 'string') {

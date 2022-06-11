@@ -24,9 +24,8 @@ class ErrorWithCode extends Error {
  * The collection can be another Map, an array of Map-like entries,
  * or a plain object.
  *
- * @param {Map} map The destination Map.
- * @param {object | Map | Array[]} items The item collection.
- * @returns {void}
+ * @param map The destination Map.
+ * @param items The item collection.
  */
 function putAll (map: Map<string, Buffer>, items?: FileContentsMapping): void {
   if (typeof items !== 'object' || items == null) return
@@ -49,7 +48,7 @@ export class MemoryAdapter extends Adapter {
    * The collection can be another Map, an array of Map-like entries,
    * or a plain object.
    *
-   * @param {object | Map | Array[]} initialFiles Existing files.
+   * @param initialFiles Existing files.
    */
   constructor (initialFiles?: FileContentsMapping) {
     super()
