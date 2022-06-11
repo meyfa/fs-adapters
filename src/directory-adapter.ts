@@ -12,7 +12,7 @@ export class DirectoryAdapter extends Adapter {
   /**
    * Construct a new DirectoryAdapter.
    *
-   * @param {string} directory The path to the directory.
+   * @param directory The path to the directory.
    */
   constructor (directory: string) {
     super()
