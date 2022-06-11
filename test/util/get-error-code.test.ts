@@ -1,10 +1,10 @@
-import { getErrorCode } from '../../lib/util/get-error-code'
+import { getErrorCode } from '../../src/util/get-error-code'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 
-describe('lib/util/get-error-code.ts', function () {
+describe('util/get-error-code.ts', function () {
   it('returns undefined for things that are not objects', function () {
     expect(getErrorCode(undefined)).to.be.undefined
     expect(getErrorCode(null)).to.be.undefined
