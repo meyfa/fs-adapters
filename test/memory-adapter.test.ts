@@ -106,16 +106,17 @@ describe('memory-adapter.ts', function () {
       })
     })
 
-    it('keeps contents', function (done) {
+    it('keeps contents', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
       })
-      obj.rename('foo', 'bar').then(() => {
-        const read = obj.createReadStream('bar')
+      await obj.rename('foo', 'bar')
+      const read = obj.createReadStream('bar')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
-          done()
+          resolve()
         })
       })
     })
@@ -279,14 +280,15 @@ describe('memory-adapter.ts', function () {
   })
 
   describe('#write()', function () {
-    it('writes data', function (done) {
+    it('writes data', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter()
-      expect(obj.write('foo', data)).to.eventually.be.fulfilled.then(() => {
-        const read = obj.createReadStream('foo')
+      await expect(obj.write('foo', data)).to.eventually.be.fulfilled
+      const read = obj.createReadStream('foo')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
-          done()
+          resolve()
         })
       })
     })
@@ -308,50 +310,54 @@ describe('memory-adapter.ts', function () {
       ])
     })
 
-    it('supports encodings for strings: no options', function (done) {
+    it('supports encodings for strings: no options', async function () {
       const obj = new MemoryAdapter()
-      expect(obj.write('foo', 'hello world')).to.eventually.be.fulfilled.then(() => {
-        const read = obj.createReadStream('foo')
+      await expect(obj.write('foo', 'hello world')).to.eventually.be.fulfilled
+      const read = obj.createReadStream('foo')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
           expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
-          done()
+          resolve()
         })
       })
     })
 
-    it('supports encodings for strings: empty options', function (done) {
+    it('supports encodings for strings: empty options', async function () {
       const obj = new MemoryAdapter()
-      expect(obj.write('foo', 'hello world', {})).to.eventually.be.fulfilled.then(() => {
-        const read = obj.createReadStream('foo')
+      await expect(obj.write('foo', 'hello world', {})).to.eventually.be.fulfilled
+      const read = obj.createReadStream('foo')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
           expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
-          done()
+          resolve()
         })
       })
     })
 
-    it('supports encodings for strings: explicit encoding option', function (done) {
+    it('supports encodings for strings: explicit encoding option', async function () {
       const obj = new MemoryAdapter()
-      expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
-        const read = obj.createReadStream('foo')
+      await expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled
+      const read = obj.createReadStream('foo')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
           expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
-          done()
+          resolve()
         })
       })
     })
 
-    it('supports encodings for strings: string parameter', function (done) {
+    it('supports encodings for strings: string parameter', async function () {
       const obj = new MemoryAdapter()
-      expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled.then(() => {
-        const read = obj.createReadStream('foo')
+      await expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled
+      const read = obj.createReadStream('foo')
+      return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
           expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
-          done()
+          resolve()
         })
       })
     })
