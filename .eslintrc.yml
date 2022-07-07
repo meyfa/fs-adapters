@@ -21,4 +21,3 @@ overrides:
     rules:
       no-unused-expressions: off
       '@typescript-eslint/no-unused-expressions': off
-      '@typescript-eslint/no-floating-promises': off
