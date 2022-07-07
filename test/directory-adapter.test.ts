@@ -2,8 +2,8 @@ import path from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
 
-import { Adapter } from '../src/adapter'
-import { DirectoryAdapter } from '../src/directory-adapter'
+import { Adapter } from '../src/adapter.js'
+import { DirectoryAdapter } from '../src/directory-adapter.js'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

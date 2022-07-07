@@ -1,5 +1,5 @@
-import { Adapter } from '../src/adapter'
-import { MemoryAdapter } from '../src/memory-adapter'
+import { Adapter } from '../src/adapter.js'
+import { MemoryAdapter } from '../src/memory-adapter.js'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

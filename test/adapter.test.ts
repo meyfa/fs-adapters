@@ -1,7 +1,7 @@
 import stream from 'stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import { Adapter } from '../src/adapter'
+import { Adapter } from '../src/adapter.js'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
