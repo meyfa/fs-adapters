@@ -1,4 +1,4 @@
-import { getErrorCode } from '../../src/util/get-error-code'
+import { getErrorCode } from '../../src/util/get-error-code.js'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

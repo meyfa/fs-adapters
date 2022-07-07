@@ -1,6 +1,6 @@
 import stream from 'stream'
 import { WritableStreamBuffer } from 'stream-buffers'
-import { resolveEncoding } from './util/resolve-encoding'
+import { resolveEncoding } from './util/resolve-encoding.js'
 
 export type ReadWriteOptions = BufferEncoding | { encoding: BufferEncoding } | { encoding?: null } | undefined | null
 

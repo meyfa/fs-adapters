@@ -1,3 +1,3 @@
-export { Adapter } from './adapter'
-export { MemoryAdapter } from './memory-adapter'
-export { DirectoryAdapter } from './directory-adapter'
+export { Adapter } from './adapter.js'
+export { MemoryAdapter } from './memory-adapter.js'
+export { DirectoryAdapter } from './directory-adapter.js'

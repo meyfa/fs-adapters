@@ -2,9 +2,9 @@ import stream from 'stream'
 import path from 'path'
 import fs from 'fs'
 
-import { Adapter, ReadWriteOptions } from './adapter'
-import { resolveEncoding } from './util/resolve-encoding'
-import { getErrorCode } from './util/get-error-code'
+import { Adapter, ReadWriteOptions } from './adapter.js'
+import { resolveEncoding } from './util/resolve-encoding.js'
+import { getErrorCode } from './util/get-error-code.js'
 
 export class DirectoryAdapter extends Adapter {
   readonly directory: string

@@ -1,8 +1,8 @@
-import { Adapter } from '../src/adapter'
-import { MemoryAdapter } from '../src/memory-adapter'
-import { DirectoryAdapter } from '../src/directory-adapter'
+import { Adapter } from '../src/adapter.js'
+import { MemoryAdapter } from '../src/memory-adapter.js'
+import { DirectoryAdapter } from '../src/directory-adapter.js'
 
-import * as index from '../src/index'
+import * as index from '../src/index.js'
 
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'

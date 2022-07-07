@@ -1,8 +1,8 @@
 import stream from 'stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import { Adapter, ReadWriteOptions } from './adapter'
-import { resolveEncoding } from './util/resolve-encoding'
+import { Adapter, ReadWriteOptions } from './adapter.js'
+import { resolveEncoding } from './util/resolve-encoding.js'
 
 type FileContents = Buffer | string
 type FileContentsMapping = Record<string, FileContents> | Map<string, FileContents> | Array<[string, FileContents]>
