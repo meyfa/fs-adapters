@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.2.0](https://github.com/meyfa/fs-adapters/compare/v6.1.0...v6.2.0) (2022-09-02)
+
+
+### Features
+
+* **types:** Export ReadWriteOptions ([#89](https://github.com/meyfa/fs-adapters/issues/89)) ([e258a17](https://github.com/meyfa/fs-adapters/commit/e258a1721407b9058d2babe1ac2ed9ac4b682b65))
+
+
+### Bug Fixes
+
+* Use file extensions in imports ([#74](https://github.com/meyfa/fs-adapters/issues/74)) ([13f3db6](https://github.com/meyfa/fs-adapters/commit/13f3db6e7b6020f02aab91cf5eb9a01fb1bf90e5))
+
 ## [6.1.0](https://github.com/meyfa/fs-adapters/compare/v6.0.2...v6.1.0) (2022-06-12)
 
 * fix: Use override keyword for additional inheritance safety ([#39](https://github.com/meyfa/fs-adapters/pull/39))
