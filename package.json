@@ -41,7 +41,7 @@
     "@types/chai": "4.3.3",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "9.1.1",
-    "@types/node": "16.11.56",
+    "@types/node": "16.11.59",
     "@types/rimraf": "3.0.2",
     "@types/stream-buffers": "3.0.4",
     "c8": "7.12.0",
