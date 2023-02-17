@@ -1,13 +1,9 @@
+import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 import rimraf from 'rimraf'
-
 import { Adapter } from '../src/adapter.js'
 import { DirectoryAdapter } from '../src/directory-adapter.js'
-
-import chai, { expect } from 'chai'
-import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
 
 const RESOURCES_DIR: string = path.join(__dirname, 'res')
 const NON_EXISTENT_DIR: string = path.join(__dirname, 'res', 'noex')
@@ -24,7 +20,7 @@ describe('directory-adapter.ts', function () {
   })
 
   it('extends Adapter', function () {
-    expect(DirectoryAdapter.prototype).to.be.instanceOf(Adapter)
+    assert.ok(DirectoryAdapter.prototype instanceof Adapter)
   })
 
   describe('#_resolve()', function () {
@@ -34,173 +30,153 @@ describe('directory-adapter.ts', function () {
 
     it('throws when resolving to base directory itself', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => callResolve(obj, '')).to.throw()
-      expect(() => callResolve(obj, '.')).to.throw()
-      expect(() => callResolve(obj, './')).to.throw()
-      expect(() => callResolve(obj, 'foo/..')).to.throw()
-      expect(() => callResolve(obj, 'foo/../')).to.throw()
-      expect(() => callResolve(obj, RESOURCES_DIR)).to.throw()
+      assert.throws(() => callResolve(obj, ''))
+      assert.throws(() => callResolve(obj, '.'))
+      assert.throws(() => callResolve(obj, './'))
+      assert.throws(() => callResolve(obj, 'foo/..'))
+      assert.throws(() => callResolve(obj, 'foo/../'))
+      assert.throws(() => callResolve(obj, RESOURCES_DIR))
     })
 
     it('throws when resolving to parent directories', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => callResolve(obj, '..')).to.throw()
-      expect(() => callResolve(obj, '../../')).to.throw()
+      assert.throws(() => callResolve(obj, '..'))
+      assert.throws(() => callResolve(obj, '../../'))
     })
 
     it('throws when resolving files outside base directory', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => callResolve(obj, '../directory-adapter.test.ts')).to.throw()
-      expect(() => callResolve(obj, 'foo/../../directory-adapter.test.ts')).to.throw()
+      assert.throws(() => callResolve(obj, '../directory-adapter.test.ts'))
+      assert.throws(() => callResolve(obj, 'foo/../../directory-adapter.test.ts'))
     })
 
     it('throws when resolving absolute paths', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => callResolve(obj, RESOURCES_DIR + '/foo.bin')).to.throw()
+      assert.throws(() => callResolve(obj, RESOURCES_DIR + '/foo.bin'))
     })
 
     it('throws for paths containing a slash', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      expect(() => callResolve(obj, 'foo/bar/qux.bin')).to.throw()
+      assert.throws(() => callResolve(obj, 'foo/bar/qux.bin'))
     })
   })
 
   describe('#init()', function () {
-    it('returns a Promise', function () {
+    it('returns a Promise', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.init()).to.eventually.be.fulfilled
+      await assert.doesNotReject(obj.init())
     })
 
-    it('creates base directory if necessary', function () {
+    it('creates base directory if necessary', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.init()).to.eventually.be.fulfilled.then(() => {
-        return expect(fs.promises.lstat(NON_EXISTENT_DIR)).to.eventually.be.fulfilled
-          .and.satisfy((stats: fs.Stats) => stats.isDirectory())
-      })
+      await obj.init()
+      const stats = await fs.promises.lstat(NON_EXISTENT_DIR)
+      assert.strictEqual(stats.isDirectory(), true)
     })
 
-    it('rejects if base path denotes a file', function () {
+    it('rejects if base path denotes a file', async function () {
       const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'test.txt'))
-      return expect(obj.init()).to.eventually.be.rejected
+      await assert.rejects(obj.init())
     })
   })
 
   describe('#listFiles()', function () {
-    it('resolves to an array', function () {
+    it('resolves to an array', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.listFiles()).to.eventually.be.an('array')
+      assert.ok(Array.isArray(await obj.listFiles()))
     })
 
-    it('includes existing files', function () {
+    it('includes existing files', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.listFiles()).to.eventually.be.an('array')
-        .with.members(['test.txt'])
+      assert.deepStrictEqual(await obj.listFiles(), ['test.txt'])
     })
 
-    it('rejects for base paths that are files', function () {
+    it('rejects for base paths that are files', async function () {
       const obj = new DirectoryAdapter(path.join(RESOURCES_DIR, 'test.txt'))
-      return expect(obj.listFiles()).to.eventually.be.rejected
+      await assert.rejects(obj.listFiles())
     })
 
-    it('resolves to empty array for non-existent base directory', function () {
+    it('resolves to empty array for non-existent base directory', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.listFiles()).to.eventually.be.an('array')
-        .that.is.empty
+      assert.deepStrictEqual(await obj.listFiles(), [])
     })
   })
 
   describe('#exists()', function () {
-    it('returns false for non-existent files', function () {
+    it('returns false for non-existent files', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.exists('doesnotexist.txt')).to.eventually.equal(false)
+      assert.strictEqual(await obj.exists('doesnotexist.txt'), false)
     })
 
-    it('returns false for non-existent base directory', function () {
+    it('returns false for non-existent base directory', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.exists('test.txt')).to.eventually.equal(false)
+      assert.strictEqual(await obj.exists('test.txt'), false)
     })
 
-    it('rejects when given nothing', function () {
+    it('rejects when given nothing', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       // @ts-expect-error
-      return expect(obj.exists()).to.eventually.be.rejected
+      await assert.rejects(obj.exists())
     })
 
-    it('returns true for existing files', function () {
+    it('returns true for existing files', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.exists('test.txt')).to.eventually.equal(true)
+      assert.strictEqual(await obj.exists('test.txt'), true)
     })
   })
 
   describe('#rename()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('doesnotexist.txt', 'bar.txt'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.rename('doesnotexist.txt', 'bar.txt'), { code: 'ENOENT' })
     })
 
-    it('rejects for missing files even if renaming to same name', function () {
+    it('rejects for missing files even if renaming to same name', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('doesnotexist.txt', 'doesnotexist.txt'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.rename('doesnotexist.txt', 'doesnotexist.txt'), { code: 'ENOENT' })
     })
 
-    it('rejects for non-existent base directory, with code=ENOENT', function () {
+    it('rejects for non-existent base directory, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.rename('test.txt', 'bar.txt'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.rename('test.txt', 'bar.txt'), { code: 'ENOENT' })
     })
 
-    it('succeeds for existing files', function () {
+    it('succeeds for existing files', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.rename('test.txt', 'renamed.txt'))
-        .to.eventually.be.fulfilled.then(() => {
-          return expect(fs.promises.readdir(RESOURCES_DIR))
-            .to.eventually.have.members(['renamed.txt'])
-        })
+      await obj.rename('test.txt', 'renamed.txt')
+      assert.deepStrictEqual(await fs.promises.readdir(RESOURCES_DIR), ['renamed.txt'])
     })
 
     it('rejects if source name not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       // @ts-expect-error
-      await expect(obj.rename(null, 'bar')).to.eventually.be.rejected
-      await expect(obj.rename('', 'bar')).to.eventually.be.rejected
+      await assert.rejects(obj.rename(null, 'bar.txt'))
+      await assert.rejects(obj.rename('', 'bar.txt'))
     })
 
     it('rejects if new name is not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return await Promise.all([
-        // @ts-expect-error
-        expect(obj.rename('test.txt', null)).to.eventually.be.rejected,
-        expect(obj.rename('test.txt', '')).to.eventually.be.rejected
-      ])
+      // @ts-expect-error
+      await assert.rejects(obj.rename('test.txt', null))
+      await assert.rejects(obj.rename('test.txt', ''))
     })
   })
 
   describe('#delete()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.delete('doesnotexist.txt'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.delete('doesnotexist.txt'), { code: 'ENOENT' })
     })
 
-    it('rejects for non-existent base directory, with code=ENOENT', function () {
+    it('rejects for non-existent base directory, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.delete('test.txt'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.delete('test.txt'), { code: 'ENOENT' })
     })
 
-    it('succeeds for existing files', function () {
+    it('succeeds for existing files', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.delete('test.txt'))
-        .to.eventually.be.fulfilled.then(() => {
-          return expect(fs.promises.readdir(RESOURCES_DIR)).to.eventually.be.empty
-        })
+      await obj.delete('test.txt')
+      assert.deepStrictEqual(await fs.promises.readdir(RESOURCES_DIR), [])
     })
   })
 
@@ -208,9 +184,10 @@ describe('directory-adapter.ts', function () {
     it('obtains a stream that errors for missing files, with code=ENOENT', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('doesnotexist.txt')
-      expect(stream).to.be.an('object')
+      assert.ok(typeof stream === 'object' && stream != null)
       stream.on('error', err => {
-        expect(err).to.be.an('error').with.property('code', 'ENOENT')
+        assert.ok(err instanceof Error && 'code' in err)
+        assert.strictEqual(err.code, 'ENOENT')
         done()
       })
     })
@@ -218,9 +195,10 @@ describe('directory-adapter.ts', function () {
     it('obtains a stream that errors for non-existent base directory, with code=ENOENT', function (done) {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
       const stream = obj.createReadStream('test.txt')
-      expect(stream).to.be.an('object')
+      assert.ok(typeof stream === 'object' && stream != null)
       stream.on('error', err => {
-        expect(err).to.be.an('error').with.property('code', 'ENOENT')
+        assert.ok(err instanceof Error && 'code' in err)
+        assert.strictEqual(err.code, 'ENOENT')
         done()
       })
     })
@@ -228,9 +206,7 @@ describe('directory-adapter.ts', function () {
     it('obtains readable streams for existing files', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('test.txt')
-      expect(stream)
-        .to.be.an('object')
-        .with.property('read').that.is.a('function')
+      assert.ok(typeof stream.read === 'function')
       stream.on('close', done)
       stream.destroy()
     })
@@ -240,7 +216,7 @@ describe('directory-adapter.ts', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('test.txt')
       stream.on('data', function (chunk) {
-        expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+        assert.ok(expected.equals(chunk))
         stream.on('close', done)
         stream.destroy()
       })
@@ -251,9 +227,7 @@ describe('directory-adapter.ts', function () {
     it('returns writable streams', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createWriteStream('foo.bin')
-      expect(stream)
-        .to.be.an('object')
-        .with.property('write').that.is.a('function')
+      assert.ok(typeof stream.write === 'function')
       stream.on('close', done)
       stream.destroy()
     })
@@ -264,7 +238,7 @@ describe('directory-adapter.ts', function () {
       const stream = obj.createWriteStream('foo.bin')
       stream.on('finish', function () {
         const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        expect(writtenData).to.satisfy((c: Buffer) => data.equals(c))
+        assert.ok(data.equals(writtenData))
         stream.on('close', done)
       })
       stream.end(data)
@@ -273,104 +247,93 @@ describe('directory-adapter.ts', function () {
     it('throws if name is not a string or is empty', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       // @ts-expect-error
-      expect(() => obj.createWriteStream(null)).to.throw()
-      expect(() => obj.createWriteStream('')).to.throw()
+      assert.throws(() => obj.createWriteStream(null))
+      assert.throws(() => obj.createWriteStream(''))
     })
   })
 
   describe('#read()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.read('doesnotexist.txt')).to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.read('doesnotexist.txt'), { code: 'ENOENT' })
     })
 
-    it('rejects for non-existent base directory, with code=ENOENT', function () {
+    it('rejects for non-existent base directory, with code=ENOENT', async function () {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
-      return expect(obj.read('test.txt')).to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.read('test.txt'), { code: 'ENOENT' })
     })
 
-    it('reads existing files', function () {
+    it('reads existing files', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.read('test.txt'))
-        .to.eventually.satisfy((d: Buffer) => data.equals(d))
+      const actual = await obj.read('test.txt')
+      assert.ok(Buffer.isBuffer(actual) && data.equals(actual))
     })
 
-    it('converts to string if passed an encoding', function () {
+    it('converts to string if passed an encoding', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.read('test.txt', { encoding: 'utf8' }))
-        .to.eventually.equal('hello world')
+      assert.strictEqual(await obj.read('test.txt', 'utf8'), 'hello world')
     })
 
-    it('ignores empty options', function () {
+    it('ignores empty options', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.read('test.txt', {}))
-        .to.eventually.satisfy((d: Buffer) => data.equals(d))
+      const actual = await obj.read('test.txt', {})
+      assert.ok(Buffer.isBuffer(actual) && data.equals(actual))
     })
 
-    it('treats string options as encoding', function () {
+    it('treats string options as encoding', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.read('test.txt', 'utf8'))
-        .to.eventually.equal('hello world')
+      assert.strictEqual(await obj.read('test.txt', 'utf8'), 'hello world')
     })
   })
 
   describe('#write()', function () {
-    it('writes data', function () {
+    it('writes data', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.write('foo.bin', data)).to.eventually.be.fulfilled.then(() => {
-        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        return expect(writtenData).to.satisfy((c: Buffer) => data.equals(c))
-      })
+      await obj.write('foo.bin', data)
+      const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+      assert.ok(data.equals(writtenData))
     })
 
     it('rejects if name is not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return await Promise.all([
-        // @ts-expect-error
-        expect(obj.write(null, Buffer.alloc(0))).to.eventually.be.rejected,
-        expect(obj.write('', Buffer.alloc(0))).to.eventually.be.rejected
-      ])
+      // @ts-expect-error
+      await assert.rejects(obj.write(null, Buffer.alloc(0)))
+      await assert.rejects(obj.write('', Buffer.alloc(0)))
     })
 
-    it('supports encodings for strings: no options', function () {
+    it('supports encodings for strings: no options', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.write('foo.bin', 'hello world')).to.eventually.be.fulfilled.then(() => {
-        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        const expected = Buffer.from('hello world', 'utf8')
-        return expect(writtenData).to.satisfy((c: Buffer) => expected.equals(c))
-      })
+      await obj.write('foo.bin', 'hello world')
+      const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+      const expected = Buffer.from('hello world', 'utf8')
+      assert.ok(expected.equals(writtenData))
     })
 
-    it('supports encodings for strings: empty options', function () {
+    it('supports encodings for strings: empty options', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.write('foo.bin', 'hello world', {})).to.eventually.be.fulfilled.then(() => {
-        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        const expected = Buffer.from('hello world', 'utf8')
-        return expect(writtenData).to.satisfy((c: Buffer) => expected.equals(c))
-      })
+      await obj.write('foo.bin', 'hello world', {})
+      const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+      const expected = Buffer.from('hello world', 'utf8')
+      assert.ok(expected.equals(writtenData))
     })
 
-    it('supports encodings for strings: explicit encoding option', function () {
+    it('supports encodings for strings: explicit encoding option', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.write('foo.bin', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled.then(() => {
-        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        const expected = Buffer.from('hello world', 'utf16le')
-        return expect(writtenData).to.satisfy((c: Buffer) => expected.equals(c))
-      })
+      await obj.write('foo.bin', 'hello world', { encoding: 'utf16le' })
+      const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+      const expected = Buffer.from('hello world', 'utf16le')
+      assert.ok(expected.equals(writtenData))
     })
 
-    it('supports encodings for strings: string parameter', function () {
+    it('supports encodings for strings: string parameter', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      return expect(obj.write('foo.bin', 'hello world', 'utf16le')).to.eventually.be.fulfilled.then(() => {
-        const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
-        const expected = Buffer.from('hello world', 'utf16le')
-        return expect(writtenData).to.satisfy((c: Buffer) => expected.equals(c))
-      })
+      await obj.write('foo.bin', 'hello world', 'utf16le')
+      const writtenData = fs.readFileSync(path.join(RESOURCES_DIR, 'foo.bin'))
+      const expected = Buffer.from('hello world', 'utf16le')
+      assert.ok(expected.equals(writtenData))
     })
   })
 })
