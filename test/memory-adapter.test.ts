@@ -1,109 +1,102 @@
+import assert from 'assert'
 import { Adapter } from '../src/adapter.js'
 import { MemoryAdapter } from '../src/memory-adapter.js'
 
-import chai, { expect } from 'chai'
-import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
-
 describe('memory-adapter.ts', function () {
   it('extends Adapter', function () {
-    expect(MemoryAdapter.prototype).to.be.instanceOf(Adapter)
+    assert.ok(MemoryAdapter.prototype instanceof Adapter)
   })
 
   describe('#init()', function () {
-    it('returns a Promise', function () {
+    it('returns a Promise', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.init()).to.eventually.be.fulfilled
+      await assert.doesNotReject(obj.init())
     })
   })
 
   describe('#listFiles()', function () {
-    it('resolves to an array', function () {
+    it('resolves to an array', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.listFiles()).to.eventually.be.an('array')
+      await assert.ok(Array.isArray(await obj.listFiles()))
     })
 
-    it('includes initial files, if given a plain object', function () {
+    it('includes initial files, if given a plain object', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0),
         'bar.tmp': Buffer.alloc(0),
         baz: Buffer.alloc(0)
       })
-      return expect(obj.listFiles()).to.eventually.be.an('array')
-        .with.members(['foo', 'bar.tmp', 'baz'])
+      const files = await obj.listFiles()
+      assert.deepStrictEqual(files.sort(), ['foo', 'bar.tmp', 'baz'].sort())
     })
 
-    it('includes initial files, if given an Array', function () {
+    it('includes initial files, if given an Array', async function () {
       const obj = new MemoryAdapter([
         ['foo', Buffer.alloc(0)],
         ['bar.tmp', Buffer.alloc(0)],
         ['baz', Buffer.alloc(0)]
       ])
-      return expect(obj.listFiles()).to.eventually.be.an('array')
-        .with.members(['foo', 'bar.tmp', 'baz'])
+      const files = await obj.listFiles()
+      assert.deepStrictEqual(files.sort(), ['foo', 'bar.tmp', 'baz'].sort())
     })
 
-    it('includes initial files, if given a Map', function () {
+    it('includes initial files, if given a Map', async function () {
       const obj = new MemoryAdapter(new Map([
         ['foo', Buffer.alloc(0)],
         ['bar.tmp', Buffer.alloc(0)],
         ['baz', Buffer.alloc(0)]
       ]))
-      return expect(obj.listFiles()).to.eventually.be.an('array')
-        .with.members(['foo', 'bar.tmp', 'baz'])
+      const files = await obj.listFiles()
+      assert.deepStrictEqual(files.sort(), ['foo', 'bar.tmp', 'baz'].sort())
     })
 
-    it('converts string data to utf8 Buffer implicitly', function () {
+    it('converts string data to utf8 Buffer implicitly', async function () {
       const obj = new MemoryAdapter({
         foo: 'hello world'
       })
       const data = Buffer.from('hello world', 'utf8')
-      return expect(obj.read('foo')).to.eventually.satisfy((d: Buffer) => data.equals(d))
+      const actual = await obj.read('foo')
+      assert.ok(Buffer.isBuffer(actual) && data.equals(actual))
     })
   })
 
   describe('#exists()', function () {
-    it('returns false for missing files', function () {
+    it('returns false for missing files', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.exists('foo')).to.eventually.equal(false)
+      assert.strictEqual(await obj.exists('foo'), false)
     })
 
-    it('rejects when given nothing', function () {
+    it('rejects when given nothing', async function () {
       const obj = new MemoryAdapter()
       // @ts-expect-error
-      return expect(obj.exists()).to.eventually.be.rejected
+      await assert.rejects(obj.exists())
     })
 
-    it('returns true for existing files', function () {
+    it('returns true for existing files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return expect(obj.exists('foo')).to.eventually.equal(true)
+      assert.strictEqual(await obj.exists('foo'), true)
     })
   })
 
   describe('#rename()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.rename('foo', 'bar')).to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.rename('foo', 'bar'), { code: 'ENOENT' })
     })
 
-    it('rejects for missing files even if renaming to same name', function () {
+    it('rejects for missing files even if renaming to same name', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.rename('foo', 'foo'))
-        .to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.rename('foo', 'foo'), { code: 'ENOENT' })
     })
 
     it('renames files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return await obj.rename('foo', 'bar').then(() => {
-        return expect(obj.listFiles())
-          .to.eventually.include('bar').but.not.include('foo')
-      })
+      await obj.rename('foo', 'bar')
+      assert.deepStrictEqual(await obj.listFiles(), ['bar'])
     })
 
     it('keeps contents', async function () {
@@ -115,7 +108,7 @@ describe('memory-adapter.ts', function () {
       const read = obj.createReadStream('bar')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
+          assert.ok(data.equals(chunk))
           resolve()
         })
       })
@@ -125,62 +118,54 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return await obj.rename('foo', 'foo').then(() => {
-        return expect(obj.listFiles())
-          .to.eventually.deep.equal(['foo'])
-      })
+      await obj.rename('foo', 'foo')
+      assert.deepStrictEqual(await obj.listFiles(), ['foo'])
     })
 
     it('rejects if source name not a string or is empty', async function () {
       const obj = new MemoryAdapter()
       // @ts-expect-error
-      await expect(obj.rename(null, 'bar')).to.eventually.be.rejected
-      await expect(obj.rename('', 'bar')).to.eventually.be.rejected
+      await assert.rejects(obj.rename(null, 'bar'))
+      await assert.rejects(obj.rename('', 'bar'))
     })
 
     it('rejects if new name is not a string or is empty', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return await Promise.all([
-        // @ts-expect-error
-        expect(obj.rename('foo', null)).to.eventually.be.rejected,
-        expect(obj.rename('foo', '')).to.eventually.be.rejected
-      ])
+      // @ts-expect-error
+      await assert.rejects(obj.rename('foo', null))
+      await assert.rejects(obj.rename('foo', ''))
     })
   })
 
   describe('#delete()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.delete('foo')).to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.delete('foo'), { code: 'ENOENT' })
     })
 
     it('deletes files', async function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return await obj.delete('foo').then(() => {
-        return expect(obj.listFiles()).to.eventually.not.include('foo')
-      })
+      await obj.delete('foo')
+      assert.deepStrictEqual(await obj.listFiles(), [])
     })
   })
 
   describe('#createReadStream()', function () {
     it('throws for missing files, with code=ENOENT', function () {
       const obj = new MemoryAdapter()
-      return expect(() => obj.createReadStream('foo')).to.throw()
-        .with.property('code', 'ENOENT')
+      assert.throws(() => obj.createReadStream('foo'), { code: 'ENOENT' })
     })
 
     it('obtains readable streams for existing files', function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      return expect(obj.createReadStream('foo'))
-        .to.be.an('object')
-        .with.property('read').that.is.a('function')
+      const stream = obj.createReadStream('foo')
+      assert.ok(typeof stream.read === 'function')
     })
 
     it('allows reading data', function (done) {
@@ -190,7 +175,7 @@ describe('memory-adapter.ts', function () {
       })
       const stream = obj.createReadStream('foo')
       stream.on('data', function (chunk) {
-        expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
+        assert.ok(data.equals(chunk))
         done()
       })
     })
@@ -199,9 +184,8 @@ describe('memory-adapter.ts', function () {
   describe('#createWriteStream()', function () {
     it('returns writable streams', function () {
       const obj = new MemoryAdapter()
-      return expect(obj.createWriteStream('foo'))
-        .to.be.an('object')
-        .with.property('write').that.is.a('function')
+      const stream = obj.createWriteStream('foo')
+      assert.ok(typeof stream.write === 'function')
     })
 
     it('allows writing data', function (done) {
@@ -211,7 +195,7 @@ describe('memory-adapter.ts', function () {
         const read = obj.createReadStream('foo')
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+          assert.ok(expected.equals(chunk))
           done()
         })
       })
@@ -222,9 +206,8 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       const stream = obj.createWriteStream('foo')
       stream.on('finish', async function () {
-        await expect(obj.listFiles()).to.eventually.be.an('array')
-          .with.members(['foo'])
-          .notify(done)
+        assert.deepStrictEqual(await obj.listFiles(), ['foo'])
+        done()
       } as () => void)
       stream.end()
     })
@@ -232,50 +215,49 @@ describe('memory-adapter.ts', function () {
     it('throws if name is not a string or is empty', function () {
       const obj = new MemoryAdapter()
       // @ts-expect-error
-      expect(() => obj.createWriteStream(null)).to.throw()
-      expect(() => obj.createWriteStream('')).to.throw()
+      assert.throws(() => obj.createWriteStream(null))
+      assert.throws(() => obj.createWriteStream(''))
     })
   })
 
   describe('#read()', function () {
-    it('rejects for missing files, with code=ENOENT', function () {
+    it('rejects for missing files, with code=ENOENT', async function () {
       const obj = new MemoryAdapter()
-      return expect(obj.read('foo')).to.eventually.be.rejected
-        .with.property('code', 'ENOENT')
+      await assert.rejects(obj.read('foo'), { code: 'ENOENT' })
     })
 
-    it('reads existing files', function () {
+    it('reads existing files', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo')).to.eventually.satisfy((d: Buffer) => data.equals(d))
+      const actual = await obj.read('foo')
+      assert.ok(Buffer.isBuffer(actual) && data.equals(actual))
     })
 
-    it('converts to string if passed an encoding', function () {
+    it('converts to string if passed an encoding', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo', { encoding: 'utf8' }))
-        .to.eventually.equal('hello world')
+      assert.strictEqual(await obj.read('foo', 'utf8'), 'hello world')
     })
 
-    it('ignores empty options', function () {
+    it('ignores empty options', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo', {})).to.eventually.satisfy((d: Buffer) => data.equals(d))
+      const actual = await obj.read('foo', {})
+      assert.ok(Buffer.isBuffer(actual) && data.equals(actual))
     })
 
-    it('treats string options as encoding', function () {
+    it('treats string options as encoding', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter({
         foo: data
       })
-      return expect(obj.read('foo', 'utf8'))
-        .to.eventually.equal('hello world')
+      assert.strictEqual(await obj.read('foo', 'utf8'), 'hello world')
     })
   })
 
@@ -283,11 +265,11 @@ describe('memory-adapter.ts', function () {
     it('writes data', async function () {
       const data = Buffer.from('hello world', 'utf8')
       const obj = new MemoryAdapter()
-      await expect(obj.write('foo', data)).to.eventually.be.fulfilled
+      await obj.write('foo', data)
       const read = obj.createReadStream('foo')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
-          expect(chunk).to.satisfy((c: Buffer) => data.equals(c))
+          assert.ok(data.equals(chunk))
           resolve()
         })
       })
@@ -295,29 +277,25 @@ describe('memory-adapter.ts', function () {
 
     it('adds to the list of files', async function () {
       const obj = new MemoryAdapter()
-      return await obj.write('foo', Buffer.alloc(0)).then(() => {
-        return expect(obj.listFiles()).to.eventually.be.an('array')
-          .with.members(['foo'])
-      })
+      await obj.write('foo', Buffer.alloc(0))
+      assert.deepStrictEqual(await obj.listFiles(), ['foo'])
     })
 
     it('rejects if name is not a string or is empty', async function () {
       const obj = new MemoryAdapter()
-      return await Promise.all([
-        // @ts-expect-error
-        expect(obj.write(null, Buffer.alloc(0))).to.eventually.be.rejected,
-        expect(obj.write('', Buffer.alloc(0))).to.eventually.be.rejected
-      ])
+      // @ts-expect-error
+      await assert.rejects(obj.write(null, Buffer.alloc(0)))
+      await assert.rejects(obj.write('', Buffer.alloc(0)))
     })
 
     it('supports encodings for strings: no options', async function () {
       const obj = new MemoryAdapter()
-      await expect(obj.write('foo', 'hello world')).to.eventually.be.fulfilled
+      await obj.write('foo', 'hello world')
       const read = obj.createReadStream('foo')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+          assert.ok(expected.equals(chunk))
           resolve()
         })
       })
@@ -325,12 +303,12 @@ describe('memory-adapter.ts', function () {
 
     it('supports encodings for strings: empty options', async function () {
       const obj = new MemoryAdapter()
-      await expect(obj.write('foo', 'hello world', {})).to.eventually.be.fulfilled
+      await obj.write('foo', 'hello world', {})
       const read = obj.createReadStream('foo')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
-          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+          assert.ok(expected.equals(chunk))
           resolve()
         })
       })
@@ -338,12 +316,12 @@ describe('memory-adapter.ts', function () {
 
     it('supports encodings for strings: explicit encoding option', async function () {
       const obj = new MemoryAdapter()
-      await expect(obj.write('foo', 'hello world', { encoding: 'utf16le' })).to.eventually.be.fulfilled
+      await obj.write('foo', 'hello world', { encoding: 'utf16le' })
       const read = obj.createReadStream('foo')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
-          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+          assert.ok(expected.equals(chunk))
           resolve()
         })
       })
@@ -351,12 +329,12 @@ describe('memory-adapter.ts', function () {
 
     it('supports encodings for strings: string parameter', async function () {
       const obj = new MemoryAdapter()
-      await expect(obj.write('foo', 'hello world', 'utf16le')).to.eventually.be.fulfilled
+      await obj.write('foo', 'hello world', 'utf16le')
       const read = obj.createReadStream('foo')
       return await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
-          expect(chunk).to.satisfy((c: Buffer) => expected.equals(c))
+          assert.ok(expected.equals(chunk))
           resolve()
         })
       })
