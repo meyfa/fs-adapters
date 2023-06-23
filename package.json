@@ -43,7 +43,7 @@
     "@types/rimraf": "3.0.2",
     "@types/stream-buffers": "3.0.4",
     "c8": "8.0.0",
-    "eslint": "8.38.0",
+    "eslint": "8.43.0",
     "eslint-plugin-jsdoc": "46.2.6",
     "mocha": "10.2.0",
     "rimraf": "3.0.2",
