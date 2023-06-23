@@ -12,7 +12,6 @@ function getContentsFrom<E extends OptionalEncoding> (wsb: WritableStreamBuffer,
 /**
  * Returns the contents of a writable buffer.
  * If an encoding is specified, the contents are returned as a string, Buffer otherwise.
- *
  * @param wsb The writable buffer.
  * @param encoding The optional encoding.
  * @returns The contents as Buffer or decoded string.
@@ -32,7 +31,6 @@ function getContentsFrom (wsb: WritableStreamBuffer, encoding: OptionalEncoding)
 export class Adapter {
   /**
    * Initialize this adapter.
-   *
    * @returns A Promise for when initialization is done.
    */
   async init (): Promise<void> {
@@ -41,7 +39,6 @@ export class Adapter {
 
   /**
    * Obtain a list of file names accessible through this adapter.
-   *
    * @abstract
    * @returns A Promise that resolves to a file name array.
    */
@@ -51,7 +48,6 @@ export class Adapter {
 
   /**
    * Checks whether the given file name exists.
-   *
    * @abstract
    * @param fileName The name of the file to check.
    * @returns A promise returning whether this file exists.
@@ -62,7 +58,6 @@ export class Adapter {
 
   /**
    * Rename a file.
-   *
    * @abstract
    * @param fileName The old file name.
    * @param newFileName The new file name.
@@ -74,7 +69,6 @@ export class Adapter {
 
   /**
    * Delete a file.
-   *
    * @abstract
    * @param fileName The name of the file to delete.
    * @returns A Promise that resolves when done, or rejects on error.
@@ -88,7 +82,6 @@ export class Adapter {
    *
    * This should be preferred over read() when the file is potentially large or
    * does not need to be in memory all at once.
-   *
    * @abstract
    * @param fileName The name of the file to read.
    * @returns A readable stream for the file.
@@ -99,7 +92,6 @@ export class Adapter {
 
   /**
    * Create a write-stream for the given file name.
-   *
    * @abstract
    * @param fileName The name of the file to write.
    * @returns A writable stream for the file.
@@ -112,7 +104,6 @@ export class Adapter {
    * Read the file whole, resolving to its contents as a Buffer.
    * If an encoding is specified, this will convert the buffer to a string and
    * resolve to that.
-   *
    * @param fileName The name of the file to read.
    * @param options Additional options: encoding.
    * @returns Resolves to a Buffer or string, or rejects on error.
@@ -136,7 +127,6 @@ export class Adapter {
 
   /**
    * Write to the given file name.
-   *
    * @param fileName The name of the file to write.
    * @param data The data to write.
    * @param options Additional options: encoding.
