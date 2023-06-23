@@ -23,7 +23,6 @@ class ErrorWithCode extends Error {
  *
  * The collection can be another Map, an array of Map-like entries,
  * or a plain object.
- *
  * @param map The destination Map.
  * @param items The item collection.
  */
@@ -47,7 +46,6 @@ export class MemoryAdapter extends Adapter {
    *
    * The collection can be another Map, an array of Map-like entries,
    * or a plain object.
-   *
    * @param initialFiles Existing files.
    */
   constructor (initialFiles?: FileContentsMapping) {

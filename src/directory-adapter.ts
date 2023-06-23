@@ -11,7 +11,6 @@ export class DirectoryAdapter extends Adapter {
 
   /**
    * Construct a new DirectoryAdapter.
-   *
    * @param directory The path to the directory.
    */
   constructor (directory: string) {
@@ -42,7 +41,7 @@ export class DirectoryAdapter extends Adapter {
   override async init (): Promise<void> {
     try {
       await fs.promises.mkdir(this.directory)
-      return // we can assume the directory was created
+      // we can assume the directory was created
     } catch (err) {
       // ignore existing path ...
       if (getErrorCode(err) !== 'EEXIST') {
