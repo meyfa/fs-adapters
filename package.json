@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/meyfa/fs-adapters",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.16.1"
   },
   "devDependencies": {
     "@meyfa/eslint-config": "3.0.1",
