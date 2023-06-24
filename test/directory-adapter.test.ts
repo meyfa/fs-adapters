@@ -1,7 +1,6 @@
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
-import rimraf from 'rimraf'
 import { Adapter } from '../src/adapter.js'
 import { DirectoryAdapter } from '../src/directory-adapter.js'
 
@@ -10,13 +9,13 @@ const NON_EXISTENT_DIR: string = path.join(__dirname, 'res', 'noex')
 
 describe('directory-adapter.ts', function () {
   beforeEach(function () {
-    rimraf.sync(RESOURCES_DIR)
+    fs.rmSync(RESOURCES_DIR, { force: true, recursive: true })
     fs.mkdirSync(RESOURCES_DIR)
     fs.writeFileSync(path.join(RESOURCES_DIR, 'test.txt'), 'hello world')
   })
 
   after(function () {
-    rimraf.sync(RESOURCES_DIR)
+    fs.rmSync(RESOURCES_DIR, { force: true, recursive: true })
   })
 
   it('extends Adapter', function () {
