@@ -1,5 +1,22 @@
 # Changelog
 
+## [7.0.0](https://github.com/meyfa/fs-adapters/compare/v6.2.0...v7.0.0) (2023-06-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for Node.js older than v18.16.1 ([#156](https://github.com/meyfa/fs-adapters/issues/156))
+
+### Bug Fixes
+
+* Fix linter warnings ([#155](https://github.com/meyfa/fs-adapters/issues/155)) ([c48908c](https://github.com/meyfa/fs-adapters/commit/c48908ce60da9b06fbc6268f063e263235de8dfb))
+* Simplify getErrorCode() using TypeScript 4.9's "in" inference ([#113](https://github.com/meyfa/fs-adapters/issues/113)) ([54bea82](https://github.com/meyfa/fs-adapters/commit/54bea82dd6e4bafa630cb963f513a15328d083ce))
+
+
+### Miscellaneous Chores
+
+* Drop support for Node.js older than v18.16.1 ([#156](https://github.com/meyfa/fs-adapters/issues/156)) ([4c330e6](https://github.com/meyfa/fs-adapters/commit/4c330e64e3a292b44ecba8edec136a38d708527f))
+
 ## [6.2.0](https://github.com/meyfa/fs-adapters/compare/v6.1.0...v6.2.0) (2022-09-02)
 
 
