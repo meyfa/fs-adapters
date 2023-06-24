@@ -8,8 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "npm run clean && tsc",
+    "build": "node -e \"fs.rmSync('./dist',{force:true,recursive:true})\" && tsc",
     "test": "mocha --require ts-node/register --recursive \"test/**/*.test.*\"",
     "lint": "tsc --noEmit -p tsconfig.lint.json && eslint --ignore-path .gitignore .",
     "lint-fix": "tsc --noEmit -p tsconfig.lint.json && eslint --fix --ignore-path .gitignore .",
@@ -46,7 +45,6 @@
     "eslint": "8.43.0",
     "eslint-plugin-jsdoc": "46.2.6",
     "mocha": "10.2.0",
-    "rimraf": "3.0.2",
     "ts-node": "10.9.1",
     "typescript": "5.1.3"
   },
