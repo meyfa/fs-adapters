@@ -24,7 +24,7 @@ describe('directory-adapter.ts', function () {
 
   describe('#_resolve()', function () {
     // helper function to avoid repeating ts-expect-error
-    // @ts-expect-error
+    // @ts-expect-error - _resolve is private
     const callResolve = (obj: DirectoryAdapter, ...args: any[]): any => obj._resolve(...args)
 
     it('throws when resolving to base directory itself', function () {
@@ -114,7 +114,7 @@ describe('directory-adapter.ts', function () {
 
     it('rejects when given nothing', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      // @ts-expect-error
+      // @ts-expect-error - missing argument
       await assert.rejects(obj.exists())
     })
 
@@ -148,14 +148,14 @@ describe('directory-adapter.ts', function () {
 
     it('rejects if source name not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.rename(null, 'bar.txt'))
       await assert.rejects(obj.rename('', 'bar.txt'))
     })
 
     it('rejects if new name is not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.rename('test.txt', null))
       await assert.rejects(obj.rename('test.txt', ''))
     })
@@ -245,7 +245,7 @@ describe('directory-adapter.ts', function () {
 
     it('throws if name is not a string or is empty', function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       assert.throws(() => obj.createWriteStream(null))
       assert.throws(() => obj.createWriteStream(''))
     })
@@ -298,7 +298,7 @@ describe('directory-adapter.ts', function () {
 
     it('rejects if name is not a string or is empty', async function () {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.write(null, Buffer.alloc(0)))
       await assert.rejects(obj.write('', Buffer.alloc(0)))
     })
