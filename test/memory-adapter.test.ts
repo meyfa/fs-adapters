@@ -17,7 +17,7 @@ describe('memory-adapter.ts', function () {
   describe('#listFiles()', function () {
     it('resolves to an array', async function () {
       const obj = new MemoryAdapter()
-      await assert.ok(Array.isArray(await obj.listFiles()))
+      assert.ok(Array.isArray(await obj.listFiles()))
     })
 
     it('includes initial files, if given a plain object', async function () {
@@ -68,7 +68,7 @@ describe('memory-adapter.ts', function () {
 
     it('rejects when given nothing', async function () {
       const obj = new MemoryAdapter()
-      // @ts-expect-error
+      // @ts-expect-error - missing argument
       await assert.rejects(obj.exists())
     })
 
@@ -106,7 +106,7 @@ describe('memory-adapter.ts', function () {
       })
       await obj.rename('foo', 'bar')
       const read = obj.createReadStream('bar')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           assert.ok(data.equals(chunk))
           resolve()
@@ -124,7 +124,7 @@ describe('memory-adapter.ts', function () {
 
     it('rejects if source name not a string or is empty', async function () {
       const obj = new MemoryAdapter()
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.rename(null, 'bar'))
       await assert.rejects(obj.rename('', 'bar'))
     })
@@ -133,7 +133,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter({
         foo: Buffer.alloc(0)
       })
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.rename('foo', null))
       await assert.rejects(obj.rename('foo', ''))
     })
@@ -214,7 +214,7 @@ describe('memory-adapter.ts', function () {
 
     it('throws if name is not a string or is empty', function () {
       const obj = new MemoryAdapter()
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       assert.throws(() => obj.createWriteStream(null))
       assert.throws(() => obj.createWriteStream(''))
     })
@@ -267,7 +267,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       await obj.write('foo', data)
       const read = obj.createReadStream('foo')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           assert.ok(data.equals(chunk))
           resolve()
@@ -283,7 +283,7 @@ describe('memory-adapter.ts', function () {
 
     it('rejects if name is not a string or is empty', async function () {
       const obj = new MemoryAdapter()
-      // @ts-expect-error
+      // @ts-expect-error - null is not a string
       await assert.rejects(obj.write(null, Buffer.alloc(0)))
       await assert.rejects(obj.write('', Buffer.alloc(0)))
     })
@@ -292,7 +292,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       await obj.write('foo', 'hello world')
       const read = obj.createReadStream('foo')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
           assert.ok(expected.equals(chunk))
@@ -305,7 +305,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       await obj.write('foo', 'hello world', {})
       const read = obj.createReadStream('foo')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf8')
           assert.ok(expected.equals(chunk))
@@ -318,7 +318,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       await obj.write('foo', 'hello world', { encoding: 'utf16le' })
       const read = obj.createReadStream('foo')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
           assert.ok(expected.equals(chunk))
@@ -331,7 +331,7 @@ describe('memory-adapter.ts', function () {
       const obj = new MemoryAdapter()
       await obj.write('foo', 'hello world', 'utf16le')
       const read = obj.createReadStream('foo')
-      return await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve) => {
         read.on('data', function (chunk) {
           const expected = Buffer.from('hello world', 'utf16le')
           assert.ok(expected.equals(chunk))

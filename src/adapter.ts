@@ -116,7 +116,7 @@ export class Adapter {
 
     const stream = this.createReadStream(fileName)
     const writable = new WritableStreamBuffer()
-    const promise: Promise<Buffer | string> = new Promise((resolve, reject) => {
+    const promise = new Promise<Buffer | string>((resolve, reject) => {
       // errors are not forwarded with pipe, so listen on original stream
       stream.on('error', err => reject(err))
       writable.on('finish', () => resolve(getContentsFrom(writable, encoding)))
@@ -139,7 +139,7 @@ export class Adapter {
     const encoding = resolveEncoding(options)
 
     const stream = this.createWriteStream(fileName)
-    return await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       stream.on('error', err => reject(err))
       // The typings for stream.end do not specify an error parameter on the callback.
       // Yet, we sometimes see an error parameter given to that callback, with real stream implementations.
