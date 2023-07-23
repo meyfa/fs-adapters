@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/meyfa/fs-adapters/compare/v7.0.0...v7.0.1) (2023-07-23)
+
+
+### Miscellaneous Chores
+
+* Publish with provenance ([#168](https://github.com/meyfa/fs-adapters/issues/168)) ([377669a](https://github.com/meyfa/fs-adapters/commit/377669a2bfec823050fc1d20949c805876a0d23e))
+
 ## [7.0.0](https://github.com/meyfa/fs-adapters/compare/v6.2.0...v7.0.0) (2023-06-24)
 
 
