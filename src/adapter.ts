@@ -1,4 +1,4 @@
-import stream from 'stream'
+import stream from 'node:stream'
 import { WritableStreamBuffer } from 'stream-buffers'
 import { resolveEncoding } from './util/resolve-encoding.js'
 

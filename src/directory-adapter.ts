@@ -1,6 +1,6 @@
-import stream from 'stream'
-import path from 'path'
-import fs from 'fs'
+import stream from 'node:stream'
+import path from 'node:path'
+import fs from 'node:fs'
 
 import { Adapter, ReadWriteOptions } from './adapter.js'
 import { resolveEncoding } from './util/resolve-encoding.js'

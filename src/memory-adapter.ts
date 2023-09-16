@@ -1,4 +1,4 @@
-import stream from 'stream'
+import stream from 'node:stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
 import { Adapter, ReadWriteOptions } from './adapter.js'
