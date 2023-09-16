@@ -7,17 +7,6 @@ import { resolveEncoding } from './util/resolve-encoding.js'
 type FileContents = Buffer | string
 type FileContentsMapping = Record<string, FileContents> | Map<string, FileContents> | Array<[string, FileContents]>
 
-type ErrorCode = 'ENOENT'
-
-class ErrorWithCode extends Error {
-  readonly code: ErrorCode
-
-  constructor (code: ErrorCode) {
-    super()
-    this.code = code
-  }
-}
-
 /**
  * Add a collection of items to the given Map.
  *
@@ -65,14 +54,14 @@ export class MemoryAdapter extends Adapter {
   private _ensureExists (fileName: string): void {
     // throw ENOENT when file not found
     if (!this.entries.has(fileName)) {
-      throw new ErrorWithCode('ENOENT')
+      throw Object.assign(new Error(), { code: 'ENOENT' })
     }
   }
 
   private _safeGet (fileName: string): Buffer {
     const value: Buffer | undefined = this.entries.get(fileName)
     if (value == null) {
-      throw new ErrorWithCode('ENOENT')
+      throw Object.assign(new Error(), { code: 'ENOENT' })
     }
     return value
   }
