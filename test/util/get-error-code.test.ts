@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'node:assert'
 import { getErrorCode } from '../../src/util/get-error-code.js'
 
 describe('util/get-error-code.ts', function () {

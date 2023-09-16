@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'node:assert'
 import { resolveEncoding } from '../../src/util/resolve-encoding.js'
 
 describe('util/resolve-encoding.ts', function () {

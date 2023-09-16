@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'node:assert'
 import { Adapter } from '../src/adapter.js'
 import { MemoryAdapter } from '../src/memory-adapter.js'
 

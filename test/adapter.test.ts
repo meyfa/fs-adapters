@@ -1,5 +1,5 @@
-import assert from 'assert'
-import stream from 'stream'
+import assert from 'node:assert'
+import stream from 'node:stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 import { Adapter } from '../src/adapter.js'
 
