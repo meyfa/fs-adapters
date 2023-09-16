@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.0.2](https://github.com/meyfa/fs-adapters/compare/v7.0.1...v7.0.2) (2023-09-16)
+
+
+### Bug Fixes
+
+* Avoid subclassing Error for assignment of `code` property ([#187](https://github.com/meyfa/fs-adapters/issues/187)) ([bc1f5c7](https://github.com/meyfa/fs-adapters/commit/bc1f5c78e8826b67c9e24991d03dcafa69de96d4))
+* Use 'node:' protocol in imports ([#185](https://github.com/meyfa/fs-adapters/issues/185)) ([d058ac0](https://github.com/meyfa/fs-adapters/commit/d058ac030dd81bc91f98066c130570850e5372c3))
+
 ## [7.0.1](https://github.com/meyfa/fs-adapters/compare/v7.0.0...v7.0.1) (2023-07-23)
 
 
