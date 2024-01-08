@@ -6,11 +6,15 @@ import { Adapter, ReadWriteOptions } from './adapter.js'
 import { resolveEncoding } from './util/resolve-encoding.js'
 import { getErrorCode } from './util/get-error-code.js'
 
+/**
+ * A directory-based file system adapter.
+ */
 export class DirectoryAdapter extends Adapter {
   readonly directory: string
 
   /**
    * Construct a new DirectoryAdapter.
+   *
    * @param directory The path to the directory.
    */
   constructor (directory: string) {

@@ -12,6 +12,7 @@ type FileContentsMapping = Record<string, FileContents> | Map<string, FileConten
  *
  * The collection can be another Map, an array of Map-like entries,
  * or a plain object.
+ *
  * @param map The destination Map.
  * @param items The item collection.
  */
@@ -27,6 +28,9 @@ function putAll (map: Map<string, Buffer>, items?: FileContentsMapping): void {
   }
 }
 
+/**
+ * An in-memory file system adapter.
+ */
 export class MemoryAdapter extends Adapter {
   private readonly entries: Map<string, Buffer>
 
@@ -35,6 +39,7 @@ export class MemoryAdapter extends Adapter {
    *
    * The collection can be another Map, an array of Map-like entries,
    * or a plain object.
+   *
    * @param initialFiles Existing files.
    */
   constructor (initialFiles?: FileContentsMapping) {
