@@ -1,5 +1,6 @@
 /**
  * Obtain the argument's code string, if possible, and undefined otherwise.
+ *
  * @param err The error argument.
  * @returns The error code, or undefined if inaccessible.
  */
