@@ -41,7 +41,7 @@
     "@types/node": "20.12.7",
     "@types/stream-buffers": "3.0.7",
     "c8": "9.1.0",
-    "eslint": "8.57.0",
+    "eslint": "9.2.0",
     "mocha": "10.4.0",
     "ts-node": "10.9.2",
     "typescript": "5.4.5"
