@@ -36,7 +36,7 @@
     "node": ">=18.16.1"
   },
   "devDependencies": {
-    "@meyfa/eslint-config": "5.1.0",
+    "@meyfa/eslint-config": "6.0.0",
     "@types/mocha": "10.0.7",
     "@types/node": "20.14.8",
     "@types/stream-buffers": "3.0.7",
