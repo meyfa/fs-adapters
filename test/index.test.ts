@@ -7,7 +7,7 @@ import * as index from '../src/index.js'
 describe('index.ts', function () {
   describe('#Adapter', function () {
     it('exists', function () {
-      assert.ok(index.Adapter)
+      assert.ok(index.Adapter != null)
     })
 
     it('is the Adapter constructor', function () {
@@ -17,7 +17,7 @@ describe('index.ts', function () {
 
   describe('#MemoryAdapter', function () {
     it('exists', function () {
-      assert.ok(index.MemoryAdapter)
+      assert.ok(index.MemoryAdapter != null)
     })
 
     it('is the MemoryAdapter constructor', function () {
@@ -27,7 +27,7 @@ describe('index.ts', function () {
 
   describe('#DirectoryAdapter', function () {
     it('exists', function () {
-      assert.ok(index.DirectoryAdapter)
+      assert.ok(index.DirectoryAdapter != null)
     })
 
     it('is the DirectoryAdapter constructor', function () {

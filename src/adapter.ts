@@ -159,6 +159,7 @@ export class Adapter {
       // This happens specifically when they pass an error to the callback function of their _write method.
       // I think this is a bug with Node.js typings? Either way, handling the 'reject' case like this cannot hurt.
       const cb: () => void = (err?: any) => {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         if (err != null) reject(err)
         else resolve()
       }

@@ -155,7 +155,7 @@ describe('adapter.ts', function () {
       const obj = new MockWriteAdapter()
       const data = Buffer.from('hello world', 'utf8')
       await obj.write('foo', data)
-      assert.ok(obj.writtenData)
+      assert.ok(obj.writtenData != null)
       assert.ok(data.equals(obj.writtenData))
     })
 
@@ -175,7 +175,7 @@ describe('adapter.ts', function () {
       const obj = new MockWriteAdapter()
       await obj.write('foo', 'hello world')
       const expected = Buffer.from('hello world', 'utf8')
-      assert.ok(obj.writtenData)
+      assert.ok(obj.writtenData != null)
       assert.ok(expected.equals(obj.writtenData))
     })
 
@@ -183,7 +183,7 @@ describe('adapter.ts', function () {
       const obj = new MockWriteAdapter()
       await obj.write('foo', 'hello world', {})
       const expected = Buffer.from('hello world', 'utf8')
-      assert.ok(obj.writtenData)
+      assert.ok(obj.writtenData != null)
       assert.ok(expected.equals(obj.writtenData))
     })
 
@@ -191,7 +191,7 @@ describe('adapter.ts', function () {
       const obj = new MockWriteAdapter()
       await obj.write('foo', 'hello world', { encoding: 'utf16le' })
       const expected = Buffer.from('hello world', 'utf16le')
-      assert.ok(obj.writtenData)
+      assert.ok(obj.writtenData != null)
       assert.ok(expected.equals(obj.writtenData))
     })
 
@@ -199,7 +199,7 @@ describe('adapter.ts', function () {
       const obj = new MockWriteAdapter()
       await obj.write('foo', 'hello world', 'utf16le')
       const expected = Buffer.from('hello world', 'utf16le')
-      assert.ok(obj.writtenData)
+      assert.ok(obj.writtenData != null)
       assert.ok(expected.equals(obj.writtenData))
     })
   })
