@@ -1,8 +1,6 @@
 // DYNAMIC TYPING
 
-export function resolveEncoding<E extends BufferEncoding> (options: E): E
-
-export function resolveEncoding<E extends BufferEncoding> (options: { encoding: E }): E
+export function resolveEncoding<E extends BufferEncoding> (options: E | { encoding: E }): E
 
 export function resolveEncoding (options: { encoding?: null } | undefined | null): undefined
 

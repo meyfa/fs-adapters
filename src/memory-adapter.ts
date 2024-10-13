@@ -17,6 +17,7 @@ type FileContentsMapping = Record<string, FileContents> | Map<string, FileConten
  * @param items The item collection.
  */
 function putAll (map: Map<string, Buffer>, items?: FileContentsMapping): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (typeof items !== 'object' || items == null) return
 
   // convert to something that is iterable in [key, value] fashion

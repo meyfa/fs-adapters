@@ -7,6 +7,7 @@ import * as index from '../src/index.js'
 describe('index.ts', function () {
   describe('#Adapter', function () {
     it('exists', function () {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       assert.ok(index.Adapter != null)
     })
 
@@ -17,6 +18,7 @@ describe('index.ts', function () {
 
   describe('#MemoryAdapter', function () {
     it('exists', function () {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       assert.ok(index.MemoryAdapter != null)
     })
 
@@ -27,6 +29,7 @@ describe('index.ts', function () {
 
   describe('#DirectoryAdapter', function () {
     it('exists', function () {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       assert.ok(index.DirectoryAdapter != null)
     })
 
