@@ -35,7 +35,7 @@ export class DirectoryAdapter extends Adapter {
       // denotes the base directory
       throw new Error('trying to access base directory')
     }
-    if (rel.indexOf('..') === 0 || path.isAbsolute(rel)) {
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
       // navigates outside the base directory
       throw new Error('trying to navigate outside base directory')
     }

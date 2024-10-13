@@ -45,7 +45,6 @@ export class Adapter {
   /**
    * Obtain a list of file names accessible through this adapter.
    *
-   * @abstract
    * @returns A Promise that resolves to a file name array.
    */
   async listFiles (): Promise<string[]> {
@@ -55,7 +54,6 @@ export class Adapter {
   /**
    * Checks whether the given file name exists.
    *
-   * @abstract
    * @param fileName The name of the file to check.
    * @returns A promise returning whether this file exists.
    */
@@ -66,7 +64,6 @@ export class Adapter {
   /**
    * Rename a file.
    *
-   * @abstract
    * @param fileName The old file name.
    * @param newFileName The new file name.
    * @returns A Promise that resolves when done, or rejects on error.
@@ -78,7 +75,6 @@ export class Adapter {
   /**
    * Delete a file.
    *
-   * @abstract
    * @param fileName The name of the file to delete.
    * @returns A Promise that resolves when done, or rejects on error.
    */
@@ -86,13 +82,13 @@ export class Adapter {
     throw new Error('not implemented')
   }
 
+  // eslint-disable-next-line jsdoc/require-returns-check
   /**
    * Create a read-stream for the given file name.
    *
    * This should be preferred over read() when the file is potentially large or
    * does not need to be in memory all at once.
    *
-   * @abstract
    * @param fileName The name of the file to read.
    * @returns A readable stream for the file.
    */
@@ -100,10 +96,10 @@ export class Adapter {
     throw new Error('not implemented')
   }
 
+  // eslint-disable-next-line jsdoc/require-returns-check
   /**
    * Create a write-stream for the given file name.
    *
-   * @abstract
    * @param fileName The name of the file to write.
    * @returns A writable stream for the file.
    */
@@ -130,7 +126,7 @@ export class Adapter {
     const writable = new WritableStreamBuffer()
     const promise = new Promise<Buffer | string>((resolve, reject) => {
       // errors are not forwarded with pipe, so listen on original stream
-      stream.on('error', err => reject(err))
+      stream.on('error', (err) => reject(err))
       writable.on('finish', () => resolve(getContentsFrom(writable, encoding)))
     })
     stream.pipe(writable)
@@ -153,7 +149,7 @@ export class Adapter {
 
     const stream = this.createWriteStream(fileName)
     await new Promise<void>((resolve, reject) => {
-      stream.on('error', err => reject(err))
+      stream.on('error', (err) => reject(err))
       // The typings for stream.end do not specify an error parameter on the callback.
       // Yet, we sometimes see an error parameter given to that callback, with real stream implementations.
       // This happens specifically when they pass an error to the callback function of their _write method.

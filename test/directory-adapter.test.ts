@@ -183,8 +183,8 @@ describe('directory-adapter.ts', function () {
     it('obtains a stream that errors for missing files, with code=ENOENT', function (done) {
       const obj = new DirectoryAdapter(RESOURCES_DIR)
       const stream = obj.createReadStream('doesnotexist.txt')
-      assert.ok(typeof stream === 'object' && stream != null)
-      stream.on('error', err => {
+      assert.ok(typeof stream === 'object')
+      stream.on('error', (err) => {
         assert.ok(err instanceof Error && 'code' in err)
         assert.strictEqual(err.code, 'ENOENT')
         done()
@@ -194,8 +194,8 @@ describe('directory-adapter.ts', function () {
     it('obtains a stream that errors for non-existent base directory, with code=ENOENT', function (done) {
       const obj = new DirectoryAdapter(NON_EXISTENT_DIR)
       const stream = obj.createReadStream('test.txt')
-      assert.ok(typeof stream === 'object' && stream != null)
-      stream.on('error', err => {
+      assert.ok(typeof stream === 'object')
+      stream.on('error', (err) => {
         assert.ok(err instanceof Error && 'code' in err)
         assert.strictEqual(err.code, 'ENOENT')
         done()

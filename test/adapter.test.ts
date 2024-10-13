@@ -4,8 +4,8 @@ import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 import { Adapter } from '../src/adapter.js'
 
 class MockReadAdapter extends Adapter {
-  shouldThrow: boolean = false
-  shouldError: boolean = false
+  shouldThrow = false
+  shouldError = false
 
   override createReadStream (fileName: string): stream.Readable {
     if (fileName !== 'foo') {
@@ -29,8 +29,8 @@ class MockReadAdapter extends Adapter {
 }
 
 class MockWriteAdapter extends Adapter {
-  shouldThrow: boolean = false
-  shouldError: boolean = false
+  shouldThrow = false
+  shouldError = false
   writtenData: Buffer | undefined
 
   override createWriteStream (fileName: string): stream.Writable {
