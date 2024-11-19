@@ -36,12 +36,12 @@
     "node": ">=18.16.1"
   },
   "devDependencies": {
-    "@meyfa/eslint-config": "8.0.0",
+    "@meyfa/eslint-config": "8.0.1",
     "@types/mocha": "10.0.9",
     "@types/node": "22.9.0",
     "@types/stream-buffers": "3.0.7",
     "c8": "10.1.2",
-    "eslint": "9.14.0",
+    "eslint": "9.15.0",
     "mocha": "10.8.2",
     "ts-node": "10.9.2",
     "typescript": "5.6.3"
