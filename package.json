@@ -38,10 +38,10 @@
   "devDependencies": {
     "@meyfa/eslint-config": "8.0.1",
     "@types/mocha": "10.0.10",
-    "@types/node": "22.9.3",
+    "@types/node": "22.10.1",
     "@types/stream-buffers": "3.0.7",
     "c8": "10.1.2",
-    "eslint": "9.15.0",
+    "eslint": "9.16.0",
     "mocha": "10.8.2",
     "ts-node": "10.9.2",
     "typescript": "5.7.2"
