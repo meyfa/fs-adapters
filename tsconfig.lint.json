@@ -6,6 +6,6 @@
   "include": [
     "src",
     "test",
-    "eslint.config.mjs"
+    "eslint.config.js"
   ]
 }

@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "lib": ["ES2022"],
-    "target": "es2022",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
     "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
     "declaration": true,
     "outDir": "./dist"
   },

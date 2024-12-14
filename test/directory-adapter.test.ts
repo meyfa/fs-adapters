@@ -3,6 +3,10 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { Adapter } from '../src/adapter.js'
 import { DirectoryAdapter } from '../src/directory-adapter.js'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const RESOURCES_DIR: string = path.join(__dirname, 'res')
 const NON_EXISTENT_DIR: string = path.join(__dirname, 'res', 'noex')

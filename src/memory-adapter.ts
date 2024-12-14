@@ -1,7 +1,7 @@
 import stream from 'node:stream'
 import { ReadableStreamBuffer, WritableStreamBuffer } from 'stream-buffers'
 
-import { Adapter, ReadWriteOptions } from './adapter.js'
+import { Adapter, type ReadWriteOptions } from './adapter.js'
 import { resolveEncoding } from './util/resolve-encoding.js'
 
 type FileContents = Buffer | string

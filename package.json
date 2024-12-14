@@ -2,6 +2,7 @@
   "name": "fs-adapters",
   "version": "7.0.2",
   "description": "Minimal interfaces for file system abstraction",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
