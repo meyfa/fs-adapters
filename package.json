@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "node -e \"fs.rmSync('./dist',{force:true,recursive:true})\" && tsc",
-    "test": "mocha --require ts-node/register --recursive \"test/**/*.test.*\"",
+    "test": "mocha --require tsx --recursive \"test/**/*.test.*\"",
     "lint": "tsc --noEmit -p tsconfig.lint.json && eslint .",
     "lint-fix": "tsc --noEmit -p tsconfig.lint.json && eslint --fix .",
     "coverage": "c8 --all --src=src --reporter=text --reporter=lcov npm test",
@@ -43,7 +43,7 @@
     "c8": "10.1.2",
     "eslint": "9.16.0",
     "mocha": "11.0.1",
-    "ts-node": "10.9.2",
+    "tsx": "4.19.2",
     "typescript": "5.7.2"
   },
   "dependencies": {
