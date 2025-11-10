@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/meyfa/fs-adapters/compare/v7.0.2...v8.0.0) (2025-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migrate to ESM, dropping CommonJS support ([#270](https://github.com/meyfa/fs-adapters/issues/270))
+
+### Features
+
+* Migrate to ESM, dropping CommonJS support ([#270](https://github.com/meyfa/fs-adapters/issues/270)) ([557ed17](https://github.com/meyfa/fs-adapters/commit/557ed1787364b5ec56259a500c1960f4a1321e2b))
+
 ## [7.0.2](https://github.com/meyfa/fs-adapters/compare/v7.0.1...v7.0.2) (2023-09-16)
 
 
