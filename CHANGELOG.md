@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.0.0](https://github.com/meyfa/fs-adapters/compare/v7.0.2...v8.0.0) (2026-03-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require Node.js 22.18.0 or later ([#295](https://github.com/meyfa/fs-adapters/issues/295))
+* Migrate to ESM, dropping CommonJS support ([#270](https://github.com/meyfa/fs-adapters/issues/270))
+
+### Features
+
+* Migrate to ESM, dropping CommonJS support ([#270](https://github.com/meyfa/fs-adapters/issues/270)) ([557ed17](https://github.com/meyfa/fs-adapters/commit/557ed1787364b5ec56259a500c1960f4a1321e2b))
+
+
+### Miscellaneous Chores
+
+* Require Node.js 22.18.0 or later ([#295](https://github.com/meyfa/fs-adapters/issues/295)) ([bd3c66d](https://github.com/meyfa/fs-adapters/commit/bd3c66df116a6cc70cd673881b852b20e8d3e82e))
+
 ## [7.0.2](https://github.com/meyfa/fs-adapters/compare/v7.0.1...v7.0.2) (2023-09-16)
 
 
